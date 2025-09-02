@@ -2,7 +2,8 @@ import { injectable } from 'tsyringe'
 import { AppError } from '../errors/app.error'
 import { Transaction } from '../models/transaction.model'
 import { supabase } from '../services/supabase'
-import { mapTransactionToDb } from '../utils/utils'
+import { mapDbToTransaction, mapTransactionToDb } from '../utils/utils'
+import { DbTransaction } from '../types/transaction'
 
 export interface ITransactionRepository {
   create(transaction: Transaction): Promise<Transaction>
@@ -22,7 +23,7 @@ export class TransactionRepository implements ITransactionRepository {
 
     if (error) throw error
 
-    return data as Transaction
+    return mapDbToTransaction(data as DbTransaction)
   }
 
   async findAll(): Promise<Transaction[]> {
@@ -34,7 +35,7 @@ export class TransactionRepository implements ITransactionRepository {
     if (error) throw error
     if (!data) throw AppError.notFound('Transactions')
 
-    return data as Transaction[]
+    return (data as DbTransaction[]).map(mapDbToTransaction)
   }
 
   async findById(id: number): Promise<Transaction | null> {
@@ -47,7 +48,7 @@ export class TransactionRepository implements ITransactionRepository {
     if (error && error.code !== 'PGRST116') throw error
     if (!data) throw AppError.notFound('Transaction (id: ' + id + ')')
 
-    return data as Transaction | null
+    return mapDbToTransaction(data)
   }
 
   async delete(id: number): Promise<void> {

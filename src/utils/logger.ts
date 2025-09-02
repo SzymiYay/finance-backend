@@ -17,10 +17,10 @@ const logger = winston.createLogger({
 
       const cleanMeta = Object.keys(meta)
         .filter((key) => typeof key === 'string')
-        .reduce((obj, key) => {
+        .reduce<Record<string, unknown>>((obj, key) => {
           obj[key] = meta[key]
           return obj
-        }, {} as any)
+        }, {})
 
       if (Object.keys(cleanMeta).length > 0) {
         const formatted = util.inspect(cleanMeta, {
@@ -40,7 +40,7 @@ const logger = winston.createLogger({
 
 interface LogMeta {
   context?: string
-  [key: string]: any
+  [key: string]: unknown
 }
 
 export const log = {

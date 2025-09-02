@@ -1,0 +1,8 @@
+#!/bin/sh
+echo "🔍 Checking code..."
+
+. "$HOME/.nvm/nvm.sh"
+
+npm run check
+
+echo "✅ Check passed!"

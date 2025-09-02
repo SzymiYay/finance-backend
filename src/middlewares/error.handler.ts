@@ -1,4 +1,4 @@
-import { Response, Request, NextFunction, ErrorRequestHandler } from 'express'
+import { Response, Request } from 'express'
 import { AppError } from '../errors/app.error'
 import { ErrorCode } from '../errors/codes.error'
 import { SupabaseError } from '../errors/supabase.error'
@@ -7,8 +7,7 @@ import { log } from '../utils/logger'
 export const errorHandler = (
   err: unknown,
   req: Request,
-  res: Response,
-  next: NextFunction
+  res: Response
 ): void => {
   let error: AppError
 

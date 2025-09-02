@@ -1,6 +1,6 @@
 import { inject, injectable } from 'tsyringe'
 import { Statistics, TimelinePoint } from '../types/statistics'
-import { mapDbToTransaction, roundCurrency, roundVolume } from '../utils/utils'
+import { roundCurrency, roundVolume } from '../utils/utils'
 import { TransactionService } from './transaction.service'
 
 @injectable()
@@ -11,10 +11,9 @@ export class StatisticsService {
 
   async getPortfolioStats(): Promise<Statistics[]> {
     const transactions = await this.transactionService.getTransactions()
-    const mappedTransactions = transactions?.map((d) => mapDbToTransaction(d))
     const groupedBySymbol: Record<string, Statistics> = {}
 
-    for (const transaction of mappedTransactions) {
+    for (const transaction of transactions) {
       if (!groupedBySymbol[transaction.symbol]) {
         groupedBySymbol[transaction.symbol] = {
           symbol: transaction.symbol,
@@ -61,8 +60,7 @@ export class StatisticsService {
 
   async getPortfolioTimeline(): Promise<TimelinePoint[]> {
     const transactions = await this.transactionService.getTransactions()
-    const mappedTransactions = transactions?.map((d) => mapDbToTransaction(d))
-    const transactionsSortedByDate = [...mappedTransactions].sort(
+    const transactionsSortedByDate = [...transactions].sort(
       (a, b) => new Date(a.openTime).getTime() - new Date(b.openTime).getTime()
     )
     const timeline: TimelinePoint[] = []

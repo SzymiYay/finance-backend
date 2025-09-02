@@ -13,12 +13,14 @@ export class ExcelParserService implements IExcelParser {
     const workbook = XLSX.read(buffer, { type: 'buffer' })
     const sheetName = workbook.SheetNames[1]
     const sheet = workbook.Sheets[sheetName]
-    const data = XLSX.utils.sheet_to_json(sheet, { defval: '' })
+    const data = XLSX.utils.sheet_to_json<Record<string, unknown>>(sheet, {
+      defval: ''
+    })
 
     const transactions: Transaction[] = []
     let inTransaction = false
 
-    for (const row of data as any[]) {
+    for (const row of data) {
       if (row['__EMPTY'] === 'Position' && row['__EMPTY_1'] === 'Symbol') {
         inTransaction = true
         continue
@@ -30,8 +32,8 @@ export class ExcelParserService implements IExcelParser {
         if (!row['__EMPTY_1'] || !row['__EMPTY_2']) continue
 
         transactions.push({
-          xtbId: row['__EMPTY'],
-          symbol: row['__EMPTY_1'],
+          xtbId: Number(row['__EMPTY']),
+          symbol: String(row['__EMPTY_1']),
           type: row['__EMPTY_2'] === 'BUY' ? 'BUY' : 'SELL',
           volume: Number(row['__EMPTY_3']),
           openTime: excelDateToJSDate(Number(row['__EMPTY_4'])),
@@ -42,7 +44,7 @@ export class ExcelParserService implements IExcelParser {
           swap: Number(row['__EMPTY_12']) || 0,
           rollover: Number(row['__EMPTY_13']) || 0,
           grossPL: Number(row['__EMPTY_14']) || 0,
-          comment: row['__EMPTY_15'] || ''
+          comment: String(row['__EMPTY_15']) || ''
         })
       }
     }

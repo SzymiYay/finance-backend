@@ -39,11 +39,10 @@ export class ImportController {
     imported: 42,
     preview: [
       {
-        id: 1,
         symbol: 'AAPL',
         type: 'BUY',
         volume: 10,
-        openTime: '2025-01-01T10:00:00Z',
+        openTime: new Date('2025-01-01T10:00:00Z'),
         openPrice: 150.5,
         marketPrice: 155.0,
         purchaseValue: 1505,
@@ -52,7 +51,6 @@ export class ImportController {
         rollover: 0,
         grossPL: 45,
         comment: 'Initial buy',
-        createdAt: '2025-01-01T10:00:00Z',
         xtbId: 123456
       }
     ]

@@ -1,4 +1,6 @@
+import { Transaction } from '../models/transaction.model'
+
 export interface ImportResponse {
   imported: number
-  preview: any[]
+  preview: Transaction[]
 }

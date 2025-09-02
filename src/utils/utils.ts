@@ -1,6 +1,7 @@
 import { Transaction } from '../models/transaction.model'
+import { DbTransaction } from '../types/transaction'
 
-export const mapDbToTransaction = (row: any): Transaction => {
+export const mapDbToTransaction = (row: DbTransaction): Transaction => {
   return {
     id: row.id,
     xtbId: row.xtb_id,
@@ -20,7 +21,7 @@ export const mapDbToTransaction = (row: any): Transaction => {
   }
 }
 
-export const mapTransactionToDb = (transaction: Transaction): any => {
+export const mapTransactionToDb = (transaction: Transaction): DbTransaction => {
   return {
     xtb_id: transaction.xtbId,
     symbol: transaction.symbol,

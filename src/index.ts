@@ -8,15 +8,19 @@ import { log } from './utils/logger'
 import { RegisterRoutes } from './routes/routes'
 import * as swaggerDocument from '../docs/swagger.json'
 import multer from 'multer'
+import cors from 'cors'
 
 const app = express()
 const PORT = process.env.PORT || 3001
 const upload = multer({ storage: multer.memoryStorage() })
 
+app.use(cors({ origin: '*' }))
 app.use(express.json())
 app.use(requestIdMiddleware)
 app.use(loggerHandler)
+
 RegisterRoutes(app)
+
 app.use(upload.single('file'))
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument))
 
@@ -31,7 +35,7 @@ app.listen(PORT, () => {
   console.log(`✅ Docs available on http://localhost:${PORT}/api-docs`)
 })
 
-process.on('unhandledRejection', (reason: any) => {
+process.on('unhandledRejection', (reason: unknown) => {
   log.error('Unhandled Rejection:', { reason })
   process.exit(1)
 })
