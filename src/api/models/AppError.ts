@@ -2,5 +2,4 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { AppErrorResponse } from './AppErrorResponse';
-export type AppError = AppErrorResponse;
+export type AppError = Record<string, any>;

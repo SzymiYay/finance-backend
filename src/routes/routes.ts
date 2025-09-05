@@ -23,14 +23,14 @@ const multer = require('multer');
 
 const models: TsoaRoute.Models = {
     "TransactionType": {
-        "dataType": "refAlias",
-        "type": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["BUY"]},{"dataType":"enum","enums":["SELL"]}],"validators":{}},
+        "dataType": "refEnum",
+        "enums": ["BUY","SELL"],
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "Transaction": {
         "dataType": "refObject",
         "properties": {
-            "id": {"dataType":"double"},
+            "id": {"dataType":"double","required":true},
             "xtbId": {"dataType":"double","required":true},
             "symbol": {"dataType":"string","required":true},
             "type": {"ref":"TransactionType","required":true},
@@ -39,12 +39,12 @@ const models: TsoaRoute.Models = {
             "openPrice": {"dataType":"double","required":true},
             "marketPrice": {"dataType":"double","required":true},
             "purchaseValue": {"dataType":"double","required":true},
-            "commission": {"dataType":"double"},
-            "swap": {"dataType":"double"},
-            "rollover": {"dataType":"double"},
-            "grossPL": {"dataType":"double"},
-            "comment": {"dataType":"string"},
-            "created_at": {"dataType":"datetime"},
+            "commission": {"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},
+            "swap": {"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},
+            "rollover": {"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},
+            "grossPL": {"dataType":"union","subSchemas":[{"dataType":"double"},{"dataType":"enum","enums":[null]}],"required":true},
+            "comment": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}],"required":true},
+            "createdAt": {"dataType":"union","subSchemas":[{"dataType":"datetime"},{"dataType":"enum","enums":[null]}],"required":true},
         },
         "additionalProperties": true,
     },
@@ -54,46 +54,41 @@ const models: TsoaRoute.Models = {
         "enums": ["VALIDATION_ERROR","AUTHENTICATION_FAILED","AUTHORIZATION_FAILED","RESOURCE_NOT_FOUND","DUPLICATE_RESOURCE","RATE_LIMIT_EXCEEDED","INVALID_INPUT","INTERNAL_SERVER_ERROR","DATABASE_CONNECTION_ERROR","EXTERNAL_SERVICE_ERROR","SERVICE_UNAVAILABLE"],
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "ValidationError": {
-        "dataType": "refObject",
-        "properties": {
-            "field": {"dataType":"string","required":true},
-            "message": {"dataType":"string","required":true},
-            "value": {"dataType":"any"},
-        },
-        "additionalProperties": true,
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "ErrorDetails": {
-        "dataType": "refObject",
-        "properties": {
-            "field": {"dataType":"string"},
-            "value": {"dataType":"any"},
-            "errors": {"dataType":"array","array":{"dataType":"refObject","ref":"ValidationError"}},
-        },
-        "additionalProperties": {"dataType":"any"},
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "AppErrorResponse": {
+    "Error": {
         "dataType": "refObject",
         "properties": {
             "name": {"dataType":"string","required":true},
-            "errorCode": {"ref":"ErrorCode","required":true},
             "message": {"dataType":"string","required":true},
-            "statusCode": {"dataType":"double","required":true},
-            "status": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["fail"]},{"dataType":"enum","enums":["error"]}],"required":true},
-            "details": {"ref":"ErrorDetails"},
-            "timestamp": {"dataType":"string","required":true},
-            "requestId": {"dataType":"string"},
             "stack": {"dataType":"string"},
-            "cause": {"dataType":"string"},
         },
         "additionalProperties": true,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "AppError": {
+        "dataType": "refObject",
+        "properties": {
+            "name": {"dataType":"string","required":true},
+            "message": {"dataType":"string","required":true},
+            "stack": {"dataType":"string"},
+            "errorCode": {"ref":"ErrorCode","required":true},
+            "statusCode": {"dataType":"double","required":true},
+            "status": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["fail"]},{"dataType":"enum","enums":["error"]}],"required":true},
+            "cause": {"ref":"Error"},
+            "timestamp": {"dataType":"string","required":true},
+            "isOperational": {"dataType":"boolean","default":true},
+            "requestId": {"dataType":"string"},
+        },
+        "additionalProperties": true,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "Partial_TransactionCreate_": {
         "dataType": "refAlias",
-        "type": {"ref":"AppErrorResponse","validators":{}},
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"symbol":{"dataType":"string"},"xtbId":{"dataType":"double"},"type":{"ref":"TransactionType"},"volume":{"dataType":"double"},"openTime":{"dataType":"datetime"},"openPrice":{"dataType":"double"},"marketPrice":{"dataType":"double"},"purchaseValue":{"dataType":"double"},"commission":{"dataType":"double"},"swap":{"dataType":"double"},"rollover":{"dataType":"double"},"grossPL":{"dataType":"double"},"comment":{"dataType":"string"}},"validators":{}},
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "TransactionUpdate": {
+        "dataType": "refAlias",
+        "type": {"ref":"Partial_TransactionCreate_","validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "Statistics": {
@@ -118,11 +113,26 @@ const models: TsoaRoute.Models = {
         "additionalProperties": true,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "Pick_Transaction.Exclude_keyofTransaction.id-or-createdAt__": {
+        "dataType": "refAlias",
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"symbol":{"dataType":"string","required":true},"xtbId":{"dataType":"double","required":true},"type":{"ref":"TransactionType","required":true},"volume":{"dataType":"double","required":true},"openTime":{"dataType":"datetime","required":true},"openPrice":{"dataType":"double","required":true},"marketPrice":{"dataType":"double","required":true},"purchaseValue":{"dataType":"double","required":true},"commission":{"dataType":"double","required":true},"swap":{"dataType":"double","required":true},"rollover":{"dataType":"double","required":true},"grossPL":{"dataType":"double","required":true},"comment":{"dataType":"string","required":true}},"validators":{}},
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "Omit_Transaction.id-or-createdAt_": {
+        "dataType": "refAlias",
+        "type": {"ref":"Pick_Transaction.Exclude_keyofTransaction.id-or-createdAt__","validators":{}},
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "TransactionCreate": {
+        "dataType": "refAlias",
+        "type": {"ref":"Omit_Transaction.id-or-createdAt_","validators":{}},
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "ImportResponse": {
         "dataType": "refObject",
         "properties": {
             "imported": {"dataType":"double","required":true},
-            "preview": {"dataType":"array","array":{"dataType":"any"},"required":true},
+            "preview": {"dataType":"array","array":{"dataType":"refAlias","ref":"TransactionCreate"},"required":true},
         },
         "additionalProperties": true,
     },
@@ -249,6 +259,42 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
 
               await templateService.apiHandler({
                 methodName: 'getById',
+                controller,
+                response,
+                next,
+                validatedArgs,
+                successStatus: undefined,
+              });
+            } catch (err) {
+                return next(err);
+            }
+        });
+        // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+        const argsTransactionController_update: Record<string, TsoaRoute.ParameterSchema> = {
+                id: {"in":"path","name":"id","required":true,"dataType":"double"},
+                data: {"in":"body","name":"data","required":true,"ref":"TransactionUpdate"},
+        };
+        app.put('/transactions/:id',
+            ...(fetchMiddlewares<RequestHandler>(TransactionController)),
+            ...(fetchMiddlewares<RequestHandler>(TransactionController.prototype.update)),
+
+            async function TransactionController_update(request: ExRequest, response: ExResponse, next: any) {
+
+            // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+
+            let validatedArgs: any[] = [];
+            try {
+                validatedArgs = templateService.getValidatedArgs({ args: argsTransactionController_update, request, response });
+
+                const container: IocContainer = typeof iocContainer === 'function' ? (iocContainer as IocContainerFactory)(request) : iocContainer;
+
+                const controller: any = await container.get<TransactionController>(TransactionController);
+                if (typeof controller['setStatus'] === 'function') {
+                controller.setStatus(undefined);
+                }
+
+              await templateService.apiHandler({
+                methodName: 'update',
                 controller,
                 response,
                 next,

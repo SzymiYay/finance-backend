@@ -7,8 +7,12 @@ import { loggerHandler } from './middlewares/logger.handler'
 import { log } from './utils/logger'
 import { RegisterRoutes } from './routes/routes'
 import * as swaggerDocument from '../docs/swagger.json'
+import * as dotenv from 'dotenv'
 import multer from 'multer'
 import cors from 'cors'
+import { AppDataSource } from './data-source'
+
+dotenv.config()
 
 const app = express()
 const PORT = process.env.PORT || 3001
@@ -30,10 +34,19 @@ app.get('/api-docs.json', (req, res) => {
 
 app.use(errorHandler)
 
-app.listen(PORT, () => {
-  console.log(`✅ Backend running on http://localhost:${PORT}`)
-  console.log(`✅ Docs available on http://localhost:${PORT}/api-docs`)
-})
+AppDataSource.initialize()
+  .then(() => {
+    app.listen(PORT, () => {
+      if (process.env.NODE_ENV === 'development') {
+        log.info(`✅ Backend running on http://localhost:${PORT}`)
+        log.info(`✅ Docs available on http://localhost:${PORT}/api-docs`)
+      }
+    })
+  })
+  .catch((err) => {
+    log.error('❌ Error during Data Source initialization', { error: err })
+    process.exit(1)
+  })
 
 process.on('unhandledRejection', (reason: unknown) => {
   log.error('Unhandled Rejection:', { reason })

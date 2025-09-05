@@ -1,5 +1,5 @@
 {
-  "entryFile": "src/index.ts",
+  "entryFile": "src/app.ts",
   "noImplicitAdditionalProperties": "throw",
   "controllerPathGlobs": ["src/controllers/*.ts"],
   "iocModule": "src/ioc.ts",

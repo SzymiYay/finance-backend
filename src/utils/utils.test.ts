@@ -1,11 +1,56 @@
-import { roundCurrency, roundVolume } from './utils'
+import { Transaction, TransactionType } from '../models/transaction.entity'
+import { excelDateToJSDate, roundCurrency, roundVolume } from './utils'
 
-describe('round helpers', () => {
-  it('rounds currency to 2 decimals', () => {
-    expect(roundCurrency(12.3456)).toBe(12.35)
+const sampleTransaction: Transaction = {
+  id: 1,
+  xtbId: 1,
+  symbol: 'EURUSD',
+  type: TransactionType.SELL,
+  volume: 2.0,
+  openTime: new Date('2023-02-01T00:00:00Z'),
+  openPrice: 1.1111,
+  marketPrice: 1.2222,
+  purchaseValue: 2000,
+  commission: -10,
+  swap: -2,
+  rollover: 1,
+  grossPL: -50,
+  comment: 'Another trade',
+  createdAt: new Date('2023-02-02T00:00:00Z')
+}
+
+describe('transaction.utils', () => {
+  describe('rouncCurrencty', () => {
+    it('should round to 2 decimal places', () => {
+      expect(roundCurrency(123.456)).toBe(123.46)
+      expect(roundCurrency(123.454)).toBe(123.45)
+    })
+
+    it('should return 0 for Nan', () => {
+      expect(roundCurrency(NaN)).toBe(0)
+    })
   })
 
-  it('rounds volume to 4 decimals', () => {
-    expect(roundVolume(0.123456)).toBe(0.1235)
+  describe('roundVolume', () => {
+    it('should round to 4 decimal places', () => {
+      expect(roundVolume(1.234567)).toBe(1.2346)
+      expect(roundVolume(1.23454)).toBe(1.2345)
+    })
+
+    it('should return 0 for NaN', () => {
+      expect(roundVolume(NaN)).toBe(0)
+    })
+  })
+
+  describe('excelDateToJSDate', () => {
+    it('should convert Excel serial date to JS Date', () => {
+      const result = excelDateToJSDate(3)
+      expect(result.toISOString().slice(0, 10)).toBe('1900-01-01')
+    })
+
+    it('should handle larger serial numbers', () => {
+      const result = excelDateToJSDate(44928)
+      expect(result.toISOString().slice(0, 10)).toBe('2023-01-01')
+    })
   })
 })

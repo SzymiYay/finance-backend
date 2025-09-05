@@ -12,6 +12,7 @@ import {
 } from 'tsoa'
 import { inject, injectable } from 'tsyringe'
 import { ImportResponse } from '../types/import'
+import { TransactionType } from '../models/transaction.entity'
 
 @Route('import')
 @Tags('Import')
@@ -40,7 +41,7 @@ export class ImportController {
     preview: [
       {
         symbol: 'AAPL',
-        type: 'BUY',
+        type: TransactionType.BUY,
         volume: 10,
         openTime: new Date('2025-01-01T10:00:00Z'),
         openPrice: 150.5,

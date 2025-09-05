@@ -1,15 +1,16 @@
-import { Transaction } from '../models/transaction.model'
+import { Transaction, TransactionType } from '../models/transaction.entity'
 import * as XLSX from 'xlsx'
 import { excelDateToJSDate } from '../utils/utils'
 import { injectable } from 'tsyringe'
+import { TransactionCreate } from '../types/transaction'
 
 export interface IExcelParser {
-  parse(buffer: Buffer): Transaction[]
+  parse(buffer: Buffer): TransactionCreate[]
 }
 
 @injectable()
 export class ExcelParserService implements IExcelParser {
-  parse(buffer: Buffer): Transaction[] {
+  parse(buffer: Buffer): TransactionCreate[] {
     const workbook = XLSX.read(buffer, { type: 'buffer' })
     const sheetName = workbook.SheetNames[1]
     const sheet = workbook.Sheets[sheetName]
@@ -17,7 +18,7 @@ export class ExcelParserService implements IExcelParser {
       defval: ''
     })
 
-    const transactions: Transaction[] = []
+    const transactions: TransactionCreate[] = []
     let inTransaction = false
 
     for (const row of data) {
@@ -34,7 +35,10 @@ export class ExcelParserService implements IExcelParser {
         transactions.push({
           xtbId: Number(row['__EMPTY']),
           symbol: String(row['__EMPTY_1']),
-          type: row['__EMPTY_2'] === 'BUY' ? 'BUY' : 'SELL',
+          type:
+            row['__EMPTY_2'] === 'BUY'
+              ? TransactionType.BUY
+              : TransactionType.SELL,
           volume: Number(row['__EMPTY_3']),
           openTime: excelDateToJSDate(Number(row['__EMPTY_4'])),
           openPrice: Number(row['__EMPTY_5']),

@@ -8,11 +8,11 @@
 		"responses": {},
 		"schemas": {
 			"TransactionType": {
-				"type": "string",
 				"enum": [
 					"BUY",
 					"SELL"
-				]
+				],
+				"type": "string"
 			},
 			"Transaction": {
 				"properties": {
@@ -26,6 +26,173 @@
 					},
 					"symbol": {
 						"type": "string"
+					},
+					"type": {
+						"$ref": "#/components/schemas/TransactionType"
+					},
+					"volume": {
+						"type": "number",
+						"format": "double"
+					},
+					"openTime": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"openPrice": {
+						"type": "number",
+						"format": "double"
+					},
+					"marketPrice": {
+						"type": "number",
+						"format": "double"
+					},
+					"purchaseValue": {
+						"type": "number",
+						"format": "double"
+					},
+					"commission": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"swap": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"rollover": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"grossPL": {
+						"type": "number",
+						"format": "double",
+						"nullable": true
+					},
+					"comment": {
+						"type": "string",
+						"nullable": true
+					},
+					"createdAt": {
+						"type": "string",
+						"format": "date-time",
+						"nullable": true
+					}
+				},
+				"required": [
+					"id",
+					"xtbId",
+					"symbol",
+					"type",
+					"volume",
+					"openTime",
+					"openPrice",
+					"marketPrice",
+					"purchaseValue",
+					"commission",
+					"swap",
+					"rollover",
+					"grossPL",
+					"comment",
+					"createdAt"
+				],
+				"type": "object",
+				"additionalProperties": true
+			},
+			"ErrorCode": {
+				"enum": [
+					"VALIDATION_ERROR",
+					"AUTHENTICATION_FAILED",
+					"AUTHORIZATION_FAILED",
+					"RESOURCE_NOT_FOUND",
+					"DUPLICATE_RESOURCE",
+					"RATE_LIMIT_EXCEEDED",
+					"INVALID_INPUT",
+					"INTERNAL_SERVER_ERROR",
+					"DATABASE_CONNECTION_ERROR",
+					"EXTERNAL_SERVICE_ERROR",
+					"SERVICE_UNAVAILABLE"
+				],
+				"type": "string"
+			},
+			"Error": {
+				"properties": {
+					"name": {
+						"type": "string"
+					},
+					"message": {
+						"type": "string"
+					},
+					"stack": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"name",
+					"message"
+				],
+				"type": "object",
+				"additionalProperties": true
+			},
+			"AppError": {
+				"properties": {
+					"name": {
+						"type": "string"
+					},
+					"message": {
+						"type": "string"
+					},
+					"stack": {
+						"type": "string"
+					},
+					"errorCode": {
+						"$ref": "#/components/schemas/ErrorCode"
+					},
+					"statusCode": {
+						"type": "number",
+						"format": "double"
+					},
+					"status": {
+						"type": "string",
+						"enum": [
+							"fail",
+							"error"
+						]
+					},
+					"cause": {
+						"$ref": "#/components/schemas/Error"
+					},
+					"timestamp": {
+						"type": "string"
+					},
+					"isOperational": {
+						"type": "boolean",
+						"default": true
+					},
+					"requestId": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"name",
+					"message",
+					"errorCode",
+					"statusCode",
+					"status",
+					"timestamp"
+				],
+				"type": "object",
+				"additionalProperties": true
+			},
+			"Partial_TransactionCreate_": {
+				"properties": {
+					"symbol": {
+						"type": "string"
+					},
+					"xtbId": {
+						"type": "number",
+						"format": "double"
 					},
 					"type": {
 						"$ref": "#/components/schemas/TransactionType"
@@ -68,125 +235,13 @@
 					},
 					"comment": {
 						"type": "string"
-					},
-					"created_at": {
-						"type": "string",
-						"format": "date-time"
-					}
-				},
-				"required": [
-					"xtbId",
-					"symbol",
-					"type",
-					"volume",
-					"openTime",
-					"openPrice",
-					"marketPrice",
-					"purchaseValue"
-				],
-				"type": "object",
-				"additionalProperties": true
-			},
-			"ErrorCode": {
-				"enum": [
-					"VALIDATION_ERROR",
-					"AUTHENTICATION_FAILED",
-					"AUTHORIZATION_FAILED",
-					"RESOURCE_NOT_FOUND",
-					"DUPLICATE_RESOURCE",
-					"RATE_LIMIT_EXCEEDED",
-					"INVALID_INPUT",
-					"INTERNAL_SERVER_ERROR",
-					"DATABASE_CONNECTION_ERROR",
-					"EXTERNAL_SERVICE_ERROR",
-					"SERVICE_UNAVAILABLE"
-				],
-				"type": "string"
-			},
-			"ValidationError": {
-				"properties": {
-					"field": {
-						"type": "string"
-					},
-					"message": {
-						"type": "string"
-					},
-					"value": {}
-				},
-				"required": [
-					"field",
-					"message"
-				],
-				"type": "object",
-				"additionalProperties": true
-			},
-			"ErrorDetails": {
-				"properties": {
-					"field": {
-						"type": "string"
-					},
-					"value": {},
-					"errors": {
-						"items": {
-							"$ref": "#/components/schemas/ValidationError"
-						},
-						"type": "array"
 					}
 				},
 				"type": "object",
-				"additionalProperties": {}
+				"description": "Make all properties in T optional"
 			},
-			"AppErrorResponse": {
-				"properties": {
-					"name": {
-						"type": "string"
-					},
-					"errorCode": {
-						"$ref": "#/components/schemas/ErrorCode"
-					},
-					"message": {
-						"type": "string"
-					},
-					"statusCode": {
-						"type": "number",
-						"format": "double"
-					},
-					"status": {
-						"type": "string",
-						"enum": [
-							"fail",
-							"error"
-						]
-					},
-					"details": {
-						"$ref": "#/components/schemas/ErrorDetails"
-					},
-					"timestamp": {
-						"type": "string"
-					},
-					"requestId": {
-						"type": "string"
-					},
-					"stack": {
-						"type": "string"
-					},
-					"cause": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"name",
-					"errorCode",
-					"message",
-					"statusCode",
-					"status",
-					"timestamp"
-				],
-				"type": "object",
-				"additionalProperties": true
-			},
-			"AppError": {
-				"$ref": "#/components/schemas/AppErrorResponse"
+			"TransactionUpdate": {
+				"$ref": "#/components/schemas/Partial_TransactionCreate_"
 			},
 			"Statistics": {
 				"properties": {
@@ -242,6 +297,83 @@
 				"type": "object",
 				"additionalProperties": true
 			},
+			"Pick_Transaction.Exclude_keyofTransaction.id-or-createdAt__": {
+				"properties": {
+					"symbol": {
+						"type": "string"
+					},
+					"xtbId": {
+						"type": "number",
+						"format": "double"
+					},
+					"type": {
+						"$ref": "#/components/schemas/TransactionType"
+					},
+					"volume": {
+						"type": "number",
+						"format": "double"
+					},
+					"openTime": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"openPrice": {
+						"type": "number",
+						"format": "double"
+					},
+					"marketPrice": {
+						"type": "number",
+						"format": "double"
+					},
+					"purchaseValue": {
+						"type": "number",
+						"format": "double"
+					},
+					"commission": {
+						"type": "number",
+						"format": "double"
+					},
+					"swap": {
+						"type": "number",
+						"format": "double"
+					},
+					"rollover": {
+						"type": "number",
+						"format": "double"
+					},
+					"grossPL": {
+						"type": "number",
+						"format": "double"
+					},
+					"comment": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"symbol",
+					"xtbId",
+					"type",
+					"volume",
+					"openTime",
+					"openPrice",
+					"marketPrice",
+					"purchaseValue",
+					"commission",
+					"swap",
+					"rollover",
+					"grossPL",
+					"comment"
+				],
+				"type": "object",
+				"description": "From T, pick a set of properties whose keys are in the union K"
+			},
+			"Omit_Transaction.id-or-createdAt_": {
+				"$ref": "#/components/schemas/Pick_Transaction.Exclude_keyofTransaction.id-or-createdAt__",
+				"description": "Construct a type with the properties of T except for those in type K."
+			},
+			"TransactionCreate": {
+				"$ref": "#/components/schemas/Omit_Transaction.id-or-createdAt_"
+			},
 			"ImportResponse": {
 				"properties": {
 					"imported": {
@@ -249,7 +381,9 @@
 						"format": "double"
 					},
 					"preview": {
-						"items": {},
+						"items": {
+							"$ref": "#/components/schemas/TransactionCreate"
+						},
 						"type": "array"
 					}
 				},
@@ -330,7 +464,7 @@
 											"rollover": 0,
 											"grossPL": 45,
 											"comment": "Initial buy",
-											"created_at": "2025-01-01T10:00:00.000Z",
+											"createdAt": "2025-01-01T10:00:00.000Z",
 											"xtbId": 123456
 										}
 									}
@@ -465,6 +599,80 @@
 						}
 					}
 				]
+			},
+			"put": {
+				"operationId": "Update",
+				"responses": {
+					"200": {
+						"description": "Zaktualizowany biekt transakcji",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/Transaction"
+								}
+							}
+						}
+					},
+					"400": {
+						"description": "Invalid request body",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/AppError"
+								}
+							}
+						}
+					},
+					"404": {
+						"description": "Transaction not found",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/AppError"
+								}
+							}
+						}
+					},
+					"500": {
+						"description": "Internal server error",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/AppError"
+								}
+							}
+						}
+					}
+				},
+				"description": "Aktualizuje istniejącą transakcję na podstawie jej ID.",
+				"tags": [
+					"Transactions"
+				],
+				"security": [],
+				"parameters": [
+					{
+						"description": "Identyfikator transakcji",
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"format": "double",
+							"type": "number"
+						}
+					}
+				],
+				"requestBody": {
+					"description": "Dane transakcji do zaktualizowania (tylko pola, które chcesz zmienić)",
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/TransactionUpdate",
+								"description": "Dane transakcji do zaktualizowania (tylko pola, które chcesz zmienić)"
+							}
+						}
+					}
+				}
 			},
 			"delete": {
 				"operationId": "Delete",
@@ -641,11 +849,10 @@
 											"imported": 42,
 											"preview": [
 												{
-													"id": 1,
 													"symbol": "AAPL",
 													"type": "BUY",
 													"volume": 10,
-													"openTime": "2025-01-01T10:00:00Z",
+													"openTime": "2025-01-01T10:00:00.000Z",
 													"openPrice": 150.5,
 													"marketPrice": 155,
 													"purchaseValue": 1505,
@@ -654,7 +861,6 @@
 													"rollover": 0,
 													"grossPL": 45,
 													"comment": "Initial buy",
-													"createdAt": "2025-01-01T10:00:00Z",
 													"xtbId": 123456
 												}
 											]

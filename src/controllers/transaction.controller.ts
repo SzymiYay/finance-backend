@@ -1,6 +1,6 @@
 import { inject, injectable } from 'tsyringe'
 import { AppError } from '../errors/app.error'
-import { Transaction } from '../models/transaction.model'
+import { Transaction, TransactionType } from '../models/transaction.entity'
 import { TransactionService } from '../services/transaction.service'
 import {
   Controller,
@@ -13,8 +13,10 @@ import {
   Delete,
   Example,
   Response,
-  SuccessResponse
+  SuccessResponse,
+  Put
 } from 'tsoa'
+import { TransactionUpdate } from '../types/transaction'
 
 @Route('transactions')
 @Tags('Transactions') // grupuje endpointy w Swagger UI
@@ -39,7 +41,7 @@ export class TransactionController extends Controller {
   @Example<Transaction>({
     id: 1,
     symbol: 'AAPL',
-    type: 'BUY',
+    type: TransactionType.BUY,
     volume: 10,
     openTime: new Date('2025-01-01T10:00:00Z'),
     openPrice: 150.5,
@@ -50,7 +52,7 @@ export class TransactionController extends Controller {
     rollover: 0,
     grossPL: 45,
     comment: 'Initial buy',
-    created_at: new Date('2025-01-01T10:00:00Z'),
+    createdAt: new Date('2025-01-01T10:00:00Z'),
     xtbId: 123456
   })
   public async create(@Body() body: Transaction): Promise<Transaction> {
@@ -86,6 +88,28 @@ export class TransactionController extends Controller {
       throw AppError.notFound(`Transaction (id: ${id})`)
     }
 
+    return transaction
+  }
+
+  /**
+   * Aktualizuje istniejącą transakcję na podstawie jej ID.
+   *
+   * @param id Identyfikator transakcji
+   * @param data Dane transakcji do zaktualizowania (tylko pola, które chcesz zmienić)
+   * @returns Zaktualizowany biekt transakcji
+   */
+  @Put('{id}')
+  @Response<AppError>(400, 'Invalid request body')
+  @Response<AppError>(404, 'Transaction not found')
+  @Response<AppError>(500, 'Internal server error')
+  public async update(
+    @Path() id: number,
+    @Body() data: TransactionUpdate
+  ): Promise<Transaction> {
+    const transaction = await this.transactionService.updateTransaction(
+      id,
+      data
+    )
     return transaction
   }
 

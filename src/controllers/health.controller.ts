@@ -1,8 +1,8 @@
 import { Get, Route, Tags, Response, Example, SuccessResponse } from 'tsoa'
 import { inject, injectable } from 'tsyringe'
 import { HealthService } from '../services/health.service'
-import { HealthStatus } from '../types/health'
 import { AppError } from '../errors/app.error'
+import { ServiceStatus, SystemHealth } from '../types/health'
 
 @Route('health')
 @Tags('Health')
@@ -21,12 +21,12 @@ export class HealthController {
   @Get('/')
   @SuccessResponse('200', 'OK')
   @Response<AppError>(500, 'Internal server error')
-  @Example<HealthStatus>({
-    server: 'healthy',
-    database: 'healthy',
+  @Example<SystemHealth>({
+    server: ServiceStatus.HEALTHY,
+    database: ServiceStatus.HEALTHY,
     timestamp: '2025-09-02T00:45:00.000Z'
   })
-  public async getStatus(): Promise<HealthStatus> {
+  public async getStatus(): Promise<SystemHealth> {
     return this.healthService.getStatus()
   }
 }

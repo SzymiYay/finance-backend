@@ -2,6 +2,7 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
+import type { Partial_TransactionCreate_ } from '../models/Partial_TransactionCreate_';
 import type { Transaction } from '../models/Transaction';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
@@ -57,6 +58,32 @@ export class TransactionsService {
                 'id': id,
             },
             errors: {
+                404: `Transaction not found`,
+                500: `Internal server error`,
+            },
+        });
+    }
+    /**
+     * Aktualizuje istniejącą transakcję na podstawie jej ID.
+     * @param id Identyfikator transakcji
+     * @param requestBody Dane transakcji do zaktualizowania (tylko pola, które chcesz zmienić)
+     * @returns Transaction Zaktualizowany biekt transakcji
+     * @throws ApiError
+     */
+    public static update(
+        id: number,
+        requestBody: Partial_TransactionCreate_,
+    ): CancelablePromise<Transaction> {
+        return __request(OpenAPI, {
+            method: 'PUT',
+            url: '/transactions/{id}',
+            path: {
+                'id': id,
+            },
+            body: requestBody,
+            mediaType: 'application/json',
+            errors: {
+                400: `Invalid request body`,
                 404: `Transaction not found`,
                 500: `Internal server error`,
             },

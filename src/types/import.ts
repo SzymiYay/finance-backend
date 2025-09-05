@@ -1,6 +1,6 @@
-import { Transaction } from '../models/transaction.model'
+import { TransactionCreate } from "./transaction"
 
 export interface ImportResponse {
   imported: number
-  preview: Transaction[]
+  preview: TransactionCreate[]
 }

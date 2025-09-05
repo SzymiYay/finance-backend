@@ -1,59 +1,61 @@
 import { injectable } from 'tsyringe'
 import { AppError } from '../errors/app.error'
-import { Transaction } from '../models/transaction.model'
-import { supabase } from '../services/supabase'
-import { mapDbToTransaction, mapTransactionToDb } from '../utils/utils'
-import { DbTransaction } from '../types/transaction'
+import { Transaction } from '../models/transaction.entity'
+import { AppDataSource } from '../data-source'
+import { TransactionCreate, TransactionUpdate } from '../types/transaction'
 
 export interface ITransactionRepository {
-  create(transaction: Transaction): Promise<Transaction>
+  create(transaction: TransactionCreate): Promise<Transaction>
   findAll(): Promise<Transaction[]>
   findById(id: number): Promise<Transaction | null>
+  update(id: number, data: TransactionUpdate): Promise<Transaction>
   delete(id: number): Promise<void>
 }
 
 @injectable()
 export class TransactionRepository implements ITransactionRepository {
-  async create(transaction: Transaction): Promise<Transaction> {
-    const { data, error } = await supabase
-      .from('transactions')
-      .upsert([mapTransactionToDb(transaction)], { onConflict: 'xtb_id' })
-      .select()
-      .single()
+  private repo = AppDataSource.getRepository(Transaction)
 
-    if (error) throw error
-
-    return mapDbToTransaction(data as DbTransaction)
+  async create(transaction: TransactionCreate): Promise<Transaction> {
+    const tx = this.repo.create(transaction)
+    const saved = await this.repo.save(tx)
+    return saved
   }
 
   async findAll(): Promise<Transaction[]> {
-    const { data, error } = await supabase
-      .from('transactions')
-      .select('*')
-      .order('open_time', { ascending: false })
+    const transactions = await this.repo.find({
+      order: { openTime: 'DESC' }
+    })
 
-    if (error) throw error
-    if (!data) throw AppError.notFound('Transactions')
+    if (!transactions || transactions.length === 0)
+      throw AppError.notFound('Transactions')
 
-    return (data as DbTransaction[]).map(mapDbToTransaction)
+    return transactions
   }
 
   async findById(id: number): Promise<Transaction | null> {
-    const { data, error } = await supabase
-      .from('transactions')
-      .select('*')
-      .eq('id', id)
-      .single()
+    const transaction = await this.repo.findOneBy({ id })
 
-    if (error && error.code !== 'PGRST116') throw error
-    if (!data) throw AppError.notFound('Transaction (id: ' + id + ')')
+    if (!transaction) throw AppError.notFound(`Transaction (id: ${id})`)
 
-    return mapDbToTransaction(data)
+    return transaction
+  }
+
+  async update(id: number, data: TransactionUpdate): Promise<Transaction> {
+    const transaction = await this.repo.findOneBy({ id })
+
+    if (!transaction) throw AppError.notFound(`Transaction (id: ${id})`)
+
+    this.repo.merge(transaction, data)
+
+    const saved = await this.repo.save(transaction)
+    return saved
   }
 
   async delete(id: number): Promise<void> {
-    const { error } = await supabase.from('transactions').delete().eq('id', id)
+    const result = await this.repo.delete(id)
 
-    if (error) throw error
+    if (result.affected === 0)
+      throw AppError.notFound(`Transaction (id: ${id})`)
   }
 }

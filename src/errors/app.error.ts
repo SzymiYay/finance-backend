@@ -2,6 +2,7 @@ import { DateService } from '../services/date.service'
 import { ERROR_MESSAGES, ErrorCode, HTTP_STATUS_CODES } from './codes.error'
 
 export class AppError extends Error {
+  public readonly message: string
   public readonly errorCode: ErrorCode
   public readonly statusCode: number
   public readonly status: 'fail' | 'error'
@@ -11,9 +12,8 @@ export class AppError extends Error {
   public requestId?: string
 
   constructor(errorCode: ErrorCode, message?: string, cause?: Error) {
-    const errorMessage = message || ERROR_MESSAGES[errorCode] || 'Unknown error'
-    super(errorMessage)
-
+    super()
+    this.message = message || ERROR_MESSAGES[errorCode] || 'Unknown error'
     this.name = this.constructor.name
     this.errorCode = errorCode
     this.statusCode = HTTP_STATUS_CODES[errorCode] || 500

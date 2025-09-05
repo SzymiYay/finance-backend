@@ -1,11 +1,16 @@
-export interface DatabaseCheckResult {
-  status: 'healthy' | 'unhealthy'
+export enum ServiceStatus {
+  HEALTHY = 'healthy',
+  UNHEALTHY = 'unhealthy'
+}
+
+export interface DatabaseHealth {
+  status: ServiceStatus
   message?: string
 }
 
-export interface HealthStatus {
-  server: 'healthy' | 'unhealthy'
-  database: 'healthy' | 'unhealthy'
+export interface SystemHealth {
+  server: ServiceStatus
+  database: ServiceStatus
   message?: string
   timestamp: string
 }
