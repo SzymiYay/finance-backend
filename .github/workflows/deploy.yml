@@ -60,6 +60,8 @@ jobs:
         run: npm ci
 
       - name: Run unit tests
+        env:
+          SUPABASE_DB_URL: 'dummny-url'
         run: npm run test
 
   build:

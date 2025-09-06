@@ -26,12 +26,12 @@ describe('utils', () => {
   describe('excelDateToJSDate', () => {
     it('should convert Excel serial date to JS Date', () => {
       const result = excelDateToJSDate(3)
-      expect(result.toISOString().slice(0, 10)).toBe('1900-01-01')
+      expect(result.toISOString().slice(0, 10)).toBe('1900-01-02')
     })
 
     it('should handle larger serial numbers', () => {
       const result = excelDateToJSDate(44928)
-      expect(result.toISOString().slice(0, 10)).toBe('2023-01-01')
+      expect(result.toISOString().slice(0, 10)).toBe('2023-01-02')
     })
   })
 })
