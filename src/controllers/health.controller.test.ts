@@ -1,7 +1,7 @@
-import 'reflect-metadata'
 jest.mock('../services/health.service')
 jest.mock('../clients/supabase.client')
 
+import 'reflect-metadata'
 import { HealthService } from '../services/health.service'
 import { ServiceStatus, SystemHealth } from '../types/health'
 import { HealthController } from './health.controller'
