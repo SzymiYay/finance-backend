@@ -9,7 +9,8 @@
     "resolveJsonModule": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-    "useDefineForClassFields": false
+    "useDefineForClassFields": false,
+    "types": ["jest", "node"]
   },
   "include": ["src"]
 }
