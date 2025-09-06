@@ -2,7 +2,7 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { HealthStatus } from '../models/HealthStatus';
+import type { SystemHealth } from '../models/SystemHealth';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
@@ -14,10 +14,10 @@ export class HealthService {
      * - statusie aplikacji
      * - statusie połączenia z bazą danych,
      * - znaczniku czasu.
-     * @returns HealthStatus OK
+     * @returns SystemHealth OK
      * @throws ApiError
      */
-    public static getStatus(): CancelablePromise<HealthStatus> {
+    public static getStatus(): CancelablePromise<SystemHealth> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/health',

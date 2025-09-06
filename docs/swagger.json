@@ -185,7 +185,71 @@
 				"type": "object",
 				"additionalProperties": true
 			},
-			"Partial_TransactionCreate_": {
+			"TransactionCreate": {
+				"properties": {
+					"comment": {
+						"type": "string"
+					},
+					"grossPL": {
+						"type": "number",
+						"format": "double"
+					},
+					"rollover": {
+						"type": "number",
+						"format": "double"
+					},
+					"swap": {
+						"type": "number",
+						"format": "double"
+					},
+					"commission": {
+						"type": "number",
+						"format": "double"
+					},
+					"purchaseValue": {
+						"type": "number",
+						"format": "double"
+					},
+					"marketPrice": {
+						"type": "number",
+						"format": "double"
+					},
+					"openPrice": {
+						"type": "number",
+						"format": "double"
+					},
+					"openTime": {
+						"type": "string",
+						"format": "date-time"
+					},
+					"volume": {
+						"type": "number",
+						"format": "double"
+					},
+					"type": {
+						"$ref": "#/components/schemas/TransactionType"
+					},
+					"symbol": {
+						"type": "string"
+					},
+					"xtbId": {
+						"type": "number",
+						"format": "double"
+					}
+				},
+				"required": [
+					"purchaseValue",
+					"marketPrice",
+					"openPrice",
+					"openTime",
+					"volume",
+					"type",
+					"symbol",
+					"xtbId"
+				],
+				"type": "object"
+			},
+			"Partial_Omit_TransactionCreate.id-or-createdAt__": {
 				"properties": {
 					"symbol": {
 						"type": "string"
@@ -241,7 +305,7 @@
 				"description": "Make all properties in T optional"
 			},
 			"TransactionUpdate": {
-				"$ref": "#/components/schemas/Partial_TransactionCreate_"
+				"$ref": "#/components/schemas/Partial_Omit_TransactionCreate.id-or-createdAt__"
 			},
 			"Statistics": {
 				"properties": {
@@ -297,83 +361,6 @@
 				"type": "object",
 				"additionalProperties": true
 			},
-			"Pick_Transaction.Exclude_keyofTransaction.id-or-createdAt__": {
-				"properties": {
-					"symbol": {
-						"type": "string"
-					},
-					"xtbId": {
-						"type": "number",
-						"format": "double"
-					},
-					"type": {
-						"$ref": "#/components/schemas/TransactionType"
-					},
-					"volume": {
-						"type": "number",
-						"format": "double"
-					},
-					"openTime": {
-						"type": "string",
-						"format": "date-time"
-					},
-					"openPrice": {
-						"type": "number",
-						"format": "double"
-					},
-					"marketPrice": {
-						"type": "number",
-						"format": "double"
-					},
-					"purchaseValue": {
-						"type": "number",
-						"format": "double"
-					},
-					"commission": {
-						"type": "number",
-						"format": "double"
-					},
-					"swap": {
-						"type": "number",
-						"format": "double"
-					},
-					"rollover": {
-						"type": "number",
-						"format": "double"
-					},
-					"grossPL": {
-						"type": "number",
-						"format": "double"
-					},
-					"comment": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"symbol",
-					"xtbId",
-					"type",
-					"volume",
-					"openTime",
-					"openPrice",
-					"marketPrice",
-					"purchaseValue",
-					"commission",
-					"swap",
-					"rollover",
-					"grossPL",
-					"comment"
-				],
-				"type": "object",
-				"description": "From T, pick a set of properties whose keys are in the union K"
-			},
-			"Omit_Transaction.id-or-createdAt_": {
-				"$ref": "#/components/schemas/Pick_Transaction.Exclude_keyofTransaction.id-or-createdAt__",
-				"description": "Construct a type with the properties of T except for those in type K."
-			},
-			"TransactionCreate": {
-				"$ref": "#/components/schemas/Omit_Transaction.id-or-createdAt_"
-			},
 			"ImportResponse": {
 				"properties": {
 					"imported": {
@@ -382,7 +369,7 @@
 					},
 					"preview": {
 						"items": {
-							"$ref": "#/components/schemas/TransactionCreate"
+							"$ref": "#/components/schemas/Transaction"
 						},
 						"type": "array"
 					}
@@ -394,21 +381,20 @@
 				"type": "object",
 				"additionalProperties": true
 			},
-			"HealthStatus": {
+			"ServiceStatus": {
+				"enum": [
+					"healthy",
+					"unhealthy"
+				],
+				"type": "string"
+			},
+			"SystemHealth": {
 				"properties": {
 					"server": {
-						"type": "string",
-						"enum": [
-							"healthy",
-							"unhealthy"
-						]
+						"$ref": "#/components/schemas/ServiceStatus"
 					},
 					"database": {
-						"type": "string",
-						"enum": [
-							"healthy",
-							"unhealthy"
-						]
+						"$ref": "#/components/schemas/ServiceStatus"
 					},
 					"message": {
 						"type": "string"
@@ -451,7 +437,6 @@
 								"examples": {
 									"Example 1": {
 										"value": {
-											"id": 1,
 											"symbol": "AAPL",
 											"type": "BUY",
 											"volume": 10,
@@ -464,7 +449,6 @@
 											"rollover": 0,
 											"grossPL": 45,
 											"comment": "Initial buy",
-											"createdAt": "2025-01-01T10:00:00.000Z",
 											"xtbId": 123456
 										}
 									}
@@ -505,7 +489,7 @@
 					"content": {
 						"application/json": {
 							"schema": {
-								"$ref": "#/components/schemas/Transaction",
+								"$ref": "#/components/schemas/TransactionCreate",
 								"description": "Obiekt transakcji do utworzenia"
 							}
 						}
@@ -849,6 +833,7 @@
 											"imported": 42,
 											"preview": [
 												{
+													"id": 1,
 													"symbol": "AAPL",
 													"type": "BUY",
 													"volume": 10,
@@ -861,7 +846,8 @@
 													"rollover": 0,
 													"grossPL": 45,
 													"comment": "Initial buy",
-													"xtbId": 123456
+													"xtbId": 123456,
+													"createdAt": "2025-01-01T10:00:00.000Z"
 												}
 											]
 										}
@@ -928,7 +914,7 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/HealthStatus"
+									"$ref": "#/components/schemas/SystemHealth"
 								},
 								"examples": {
 									"Example 1": {

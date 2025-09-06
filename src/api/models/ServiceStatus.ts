@@ -2,4 +2,7 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type HealthStatus = Record<string, any>;
+export enum ServiceStatus {
+    HEALTHY = 'healthy',
+    UNHEALTHY = 'unhealthy',
+}

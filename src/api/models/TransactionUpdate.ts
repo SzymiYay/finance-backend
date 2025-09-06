@@ -2,5 +2,5 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { Partial_TransactionCreate_ } from './Partial_TransactionCreate_';
-export type TransactionUpdate = Partial_TransactionCreate_;
+import type { Partial_Omit_TransactionCreate_id_or_createdAt__ } from './Partial_Omit_TransactionCreate_id_or_createdAt__';
+export type TransactionUpdate = Partial_Omit_TransactionCreate_id_or_createdAt__;

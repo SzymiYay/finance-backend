@@ -12,7 +12,7 @@ import {
 } from 'tsoa'
 import { inject, injectable } from 'tsyringe'
 import { ImportResponse } from '../types/import'
-import { TransactionType } from '../models/transaction.entity'
+import { TransactionType } from '../types/transaction'
 
 @Route('import')
 @Tags('Import')
@@ -40,6 +40,7 @@ export class ImportController {
     imported: 42,
     preview: [
       {
+        id: 1,
         symbol: 'AAPL',
         type: TransactionType.BUY,
         volume: 10,
@@ -52,7 +53,8 @@ export class ImportController {
         rollover: 0,
         grossPL: 45,
         comment: 'Initial buy',
-        xtbId: 123456
+        xtbId: 123456,
+        createdAt: new Date('2025-01-01T10:00:00Z')
       }
     ]
   })

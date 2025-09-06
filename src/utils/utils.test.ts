@@ -1,26 +1,7 @@
-import { Transaction, TransactionType } from '../models/transaction.entity'
 import { excelDateToJSDate, roundCurrency, roundVolume } from './utils'
 
-const sampleTransaction: Transaction = {
-  id: 1,
-  xtbId: 1,
-  symbol: 'EURUSD',
-  type: TransactionType.SELL,
-  volume: 2.0,
-  openTime: new Date('2023-02-01T00:00:00Z'),
-  openPrice: 1.1111,
-  marketPrice: 1.2222,
-  purchaseValue: 2000,
-  commission: -10,
-  swap: -2,
-  rollover: 1,
-  grossPL: -50,
-  comment: 'Another trade',
-  createdAt: new Date('2023-02-02T00:00:00Z')
-}
-
-describe('transaction.utils', () => {
-  describe('rouncCurrencty', () => {
+describe('utils', () => {
+  describe('roundCurrency', () => {
     it('should round to 2 decimal places', () => {
       expect(roundCurrency(123.456)).toBe(123.46)
       expect(roundCurrency(123.454)).toBe(123.45)

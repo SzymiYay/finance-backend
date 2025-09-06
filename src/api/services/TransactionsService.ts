@@ -2,8 +2,9 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { Partial_TransactionCreate_ } from '../models/Partial_TransactionCreate_';
+import type { Partial_Omit_TransactionCreate_id_or_createdAt__ } from '../models/Partial_Omit_TransactionCreate_id_or_createdAt__';
 import type { Transaction } from '../models/Transaction';
+import type { TransactionCreate } from '../models/TransactionCreate';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
@@ -15,7 +16,7 @@ export class TransactionsService {
      * @throws ApiError
      */
     public static create(
-        requestBody: Transaction,
+        requestBody: TransactionCreate,
     ): CancelablePromise<Transaction> {
         return __request(OpenAPI, {
             method: 'POST',
@@ -72,7 +73,7 @@ export class TransactionsService {
      */
     public static update(
         id: number,
-        requestBody: Partial_TransactionCreate_,
+        requestBody: Partial_Omit_TransactionCreate_id_or_createdAt__,
     ): CancelablePromise<Transaction> {
         return __request(OpenAPI, {
             method: 'PUT',

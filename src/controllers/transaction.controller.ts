@@ -1,6 +1,6 @@
 import { inject, injectable } from 'tsyringe'
 import { AppError } from '../errors/app.error'
-import { Transaction, TransactionType } from '../models/transaction.entity'
+import { Transaction } from '../models/transaction.entity'
 import { TransactionService } from '../services/transaction.service'
 import {
   Controller,
@@ -16,10 +16,10 @@ import {
   SuccessResponse,
   Put
 } from 'tsoa'
-import { TransactionUpdate } from '../types/transaction'
+import { TransactionCreate, TransactionType, TransactionUpdate } from '../types/transaction'
 
 @Route('transactions')
-@Tags('Transactions') // grupuje endpointy w Swagger UI
+@Tags('Transactions')
 @injectable()
 export class TransactionController extends Controller {
   constructor(
@@ -38,8 +38,7 @@ export class TransactionController extends Controller {
   @SuccessResponse('201', 'Created')
   @Response<AppError>(400, 'Invalid input')
   @Response<AppError>(500, 'Internal server error')
-  @Example<Transaction>({
-    id: 1,
+  @Example<TransactionCreate>({
     symbol: 'AAPL',
     type: TransactionType.BUY,
     volume: 10,
@@ -52,10 +51,9 @@ export class TransactionController extends Controller {
     rollover: 0,
     grossPL: 45,
     comment: 'Initial buy',
-    createdAt: new Date('2025-01-01T10:00:00Z'),
     xtbId: 123456
   })
-  public async create(@Body() body: Transaction): Promise<Transaction> {
+  public async create(@Body() body: TransactionCreate): Promise<Transaction> {
     this.setStatus(201)
     return this.transactionService.addTransaction(body)
   }

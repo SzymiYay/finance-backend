@@ -11,13 +11,12 @@ export const errorHandler = (
   _next: NextFunction
 ): void => {
   let error: AppError
-
   if (!(err instanceof AppError)) {
     const supabaseError = SupabaseError.handle(err)
     if (supabaseError) {
       error = supabaseError
     } else if (err instanceof Error) {
-      error = new AppError(ErrorCode.INTERNAL_SERVER_ERROR, err.message)
+      error = new AppError(ErrorCode.INTERNAL_SERVER_ERROR, err.message, err)
       error.isOperational = false
     } else {
       error = new AppError(ErrorCode.INTERNAL_SERVER_ERROR, 'Unknown error')

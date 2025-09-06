@@ -6,7 +6,7 @@ import type { TransactionType } from './TransactionType';
 /**
  * Make all properties in T optional
  */
-export type Partial_TransactionCreate_ = {
+export type Partial_Omit_TransactionCreate_id_or_createdAt__ = {
     symbol?: string;
     xtbId?: number;
     type?: TransactionType;

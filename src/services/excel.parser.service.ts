@@ -1,8 +1,7 @@
-import { Transaction, TransactionType } from '../models/transaction.entity'
 import * as XLSX from 'xlsx'
 import { excelDateToJSDate } from '../utils/utils'
 import { injectable } from 'tsyringe'
-import { TransactionCreate } from '../types/transaction'
+import { TransactionCreate, TransactionType } from '../types/transaction'
 
 export interface IExcelParser {
   parse(buffer: Buffer): TransactionCreate[]

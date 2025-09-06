@@ -4,11 +4,7 @@ import {
   Entity,
   PrimaryGeneratedColumn
 } from 'typeorm'
-
-export enum TransactionType {
-  BUY = 'BUY',
-  SELL = 'SELL'
-}
+import { TransactionType } from '../types/transaction'
 
 @Entity('transactions')
 export class Transaction {

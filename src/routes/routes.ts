@@ -81,14 +81,19 @@ const models: TsoaRoute.Models = {
         "additionalProperties": true,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "Partial_TransactionCreate_": {
+    "TransactionCreate": {
+        "dataType": "refAlias",
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"comment":{"dataType":"string"},"grossPL":{"dataType":"double"},"rollover":{"dataType":"double"},"swap":{"dataType":"double"},"commission":{"dataType":"double"},"purchaseValue":{"dataType":"double","required":true},"marketPrice":{"dataType":"double","required":true},"openPrice":{"dataType":"double","required":true},"openTime":{"dataType":"datetime","required":true},"volume":{"dataType":"double","required":true},"type":{"ref":"TransactionType","required":true},"symbol":{"dataType":"string","required":true},"xtbId":{"dataType":"double","required":true}},"validators":{}},
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "Partial_Omit_TransactionCreate.id-or-createdAt__": {
         "dataType": "refAlias",
         "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"symbol":{"dataType":"string"},"xtbId":{"dataType":"double"},"type":{"ref":"TransactionType"},"volume":{"dataType":"double"},"openTime":{"dataType":"datetime"},"openPrice":{"dataType":"double"},"marketPrice":{"dataType":"double"},"purchaseValue":{"dataType":"double"},"commission":{"dataType":"double"},"swap":{"dataType":"double"},"rollover":{"dataType":"double"},"grossPL":{"dataType":"double"},"comment":{"dataType":"string"}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "TransactionUpdate": {
         "dataType": "refAlias",
-        "type": {"ref":"Partial_TransactionCreate_","validators":{}},
+        "type": {"ref":"Partial_Omit_TransactionCreate.id-or-createdAt__","validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "Statistics": {
@@ -113,35 +118,25 @@ const models: TsoaRoute.Models = {
         "additionalProperties": true,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "Pick_Transaction.Exclude_keyofTransaction.id-or-createdAt__": {
-        "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"symbol":{"dataType":"string","required":true},"xtbId":{"dataType":"double","required":true},"type":{"ref":"TransactionType","required":true},"volume":{"dataType":"double","required":true},"openTime":{"dataType":"datetime","required":true},"openPrice":{"dataType":"double","required":true},"marketPrice":{"dataType":"double","required":true},"purchaseValue":{"dataType":"double","required":true},"commission":{"dataType":"double","required":true},"swap":{"dataType":"double","required":true},"rollover":{"dataType":"double","required":true},"grossPL":{"dataType":"double","required":true},"comment":{"dataType":"string","required":true}},"validators":{}},
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "Omit_Transaction.id-or-createdAt_": {
-        "dataType": "refAlias",
-        "type": {"ref":"Pick_Transaction.Exclude_keyofTransaction.id-or-createdAt__","validators":{}},
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "TransactionCreate": {
-        "dataType": "refAlias",
-        "type": {"ref":"Omit_Transaction.id-or-createdAt_","validators":{}},
-    },
-    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "ImportResponse": {
         "dataType": "refObject",
         "properties": {
             "imported": {"dataType":"double","required":true},
-            "preview": {"dataType":"array","array":{"dataType":"refAlias","ref":"TransactionCreate"},"required":true},
+            "preview": {"dataType":"array","array":{"dataType":"refObject","ref":"Transaction"},"required":true},
         },
         "additionalProperties": true,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-    "HealthStatus": {
+    "ServiceStatus": {
+        "dataType": "refEnum",
+        "enums": ["healthy","unhealthy"],
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "SystemHealth": {
         "dataType": "refObject",
         "properties": {
-            "server": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["healthy"]},{"dataType":"enum","enums":["unhealthy"]}],"required":true},
-            "database": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["healthy"]},{"dataType":"enum","enums":["unhealthy"]}],"required":true},
+            "server": {"ref":"ServiceStatus","required":true},
+            "database": {"ref":"ServiceStatus","required":true},
             "message": {"dataType":"string"},
             "timestamp": {"dataType":"string","required":true},
         },
@@ -167,7 +162,7 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
 
     
         const argsTransactionController_create: Record<string, TsoaRoute.ParameterSchema> = {
-                body: {"in":"body","name":"body","required":true,"ref":"Transaction"},
+                body: {"in":"body","name":"body","required":true,"ref":"TransactionCreate"},
         };
         app.post('/transactions',
             ...(fetchMiddlewares<RequestHandler>(TransactionController)),

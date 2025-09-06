@@ -7,8 +7,8 @@ import {
 import { TransactionCreate, TransactionUpdate } from '../types/transaction'
 
 export interface ITransactionService {
-  addTransaction(transaction: Transaction): Promise<Transaction>
-  addTransactions(transactions: Transaction[]): Promise<Transaction[]>
+  addTransaction(transaction: TransactionCreate): Promise<Transaction>
+  addTransactions(transactions: TransactionCreate[]): Promise<Transaction[]>
   getTransaction(id: number): Promise<Transaction | null>
   getTransactions(): Promise<Transaction[]>
   updateTransaction(id: number, data: TransactionUpdate): Promise<Transaction>
@@ -22,11 +22,13 @@ export class TransactionService implements ITransactionService {
     private transactionRepo: ITransactionRepository
   ) {}
 
-  async addTransaction(transaction: Transaction): Promise<Transaction> {
+  async addTransaction(transaction: TransactionCreate): Promise<Transaction> {
     return this.transactionRepo.create(transaction)
   }
 
-  async addTransactions(transactions: TransactionCreate[]): Promise<Transaction[]> {
+  async addTransactions(
+    transactions: TransactionCreate[]
+  ): Promise<Transaction[]> {
     const savedTransactions: Transaction[] = []
     for (const transaction of transactions) {
       const createdTransaction = await this.transactionRepo.create(transaction)

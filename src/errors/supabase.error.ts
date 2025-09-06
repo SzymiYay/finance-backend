@@ -9,7 +9,7 @@ export class SupabaseError {
       const pgError = error as PostgrestError
 
       if (pgError.code === '23505') {
-        return AppError.badRequest('Resource already exists')
+        return AppError.conflict('Resource already exists')
       }
 
       if (pgError.code === '23502') {
@@ -18,11 +18,11 @@ export class SupabaseError {
     }
 
     if (error instanceof Error) {
-      if (error.message.includes('row-level security')) {
+      if (error.message.toLowerCase().includes('row-level security')) {
         return AppError.forbidden('Access denied')
       }
 
-      if (error.message.includes('JWT')) {
+      if (error.message.toLowerCase().includes('jwt')) {
         return AppError.unauthorized('Invalid or expired token')
       }
     }
