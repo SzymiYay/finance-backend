@@ -4,6 +4,7 @@ import { ServiceStatus, SystemHealth } from '../types/health'
 import { HealthController } from './health.controller'
 
 jest.mock('../services/health.service')
+jest.mock('../clients/supabase.client')
 
 describe('HealthController', () => {
   let healthController: HealthController

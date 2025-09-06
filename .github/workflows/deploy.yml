@@ -61,8 +61,8 @@ jobs:
 
       - name: Run unit tests
         env:
-          SUPABASE_DB_URL: 'dummny-url'
-          SUPABASE_URL: 'dummny-url'
+          SUPABASE_DB_URL: 'dummy-url'
+          SUPABASE_URL: 'dummy-url'
           SUPABASE_ANON_KEY: 'dummy-key'
         run: npm run test
 
