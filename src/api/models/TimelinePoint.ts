@@ -2,4 +2,8 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type TimelinePoint = Record<string, any>;
+export type TimelinePoint = {
+    date: string;
+    value: number;
+};
+

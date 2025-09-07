@@ -2,4 +2,12 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type Statistics = Record<string, any>;
+export type Statistics = {
+    symbol: string;
+    totalVolume: number;
+    totalCost: number;
+    currentValue: number;
+    avgPrice: number;
+    grossPL: number;
+};
+

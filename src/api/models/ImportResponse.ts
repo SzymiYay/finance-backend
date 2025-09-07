@@ -2,4 +2,9 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type ImportResponse = Record<string, any>;
+import type { Transaction } from './Transaction';
+export type ImportResponse = {
+    imported: number;
+    preview: Array<Transaction>;
+};
+

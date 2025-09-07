@@ -1,7 +1,7 @@
 import { StatisticsService } from '../services/statistics.service'
 import { Get, Route, Tags, Response, Example, SuccessResponse } from 'tsoa'
 import { inject, injectable } from 'tsyringe'
-import { Statistics, TimelinePoint } from '../types/statistics'
+import type { Statistics, TimelinePoint } from '../types/statistics'
 import { AppError } from '../errors/app.error'
 
 @Route('statistics')

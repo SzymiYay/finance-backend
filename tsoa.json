@@ -7,7 +7,8 @@
     "outputDirectory": "./docs",
     "specVersion": 3,
     "basePath": "/",
-    "securityDefinitions": {}
+    "securityDefinitions": {},
+    "noImplicitAdditionalProperties": "throw"
   },
   "routes": {
     "routesDir": "src/routes",

@@ -1,956 +1,907 @@
 {
-	"openapi": "3.0.0",
-	"components": {
-		"examples": {},
-		"headers": {},
-		"parameters": {},
-		"requestBodies": {},
-		"responses": {},
-		"schemas": {
-			"TransactionType": {
-				"enum": [
-					"BUY",
-					"SELL"
-				],
-				"type": "string"
-			},
-			"Transaction": {
-				"properties": {
-					"id": {
-						"type": "number",
-						"format": "double"
-					},
-					"xtbId": {
-						"type": "number",
-						"format": "double"
-					},
-					"symbol": {
-						"type": "string"
-					},
-					"type": {
-						"$ref": "#/components/schemas/TransactionType"
-					},
-					"volume": {
-						"type": "number",
-						"format": "double"
-					},
-					"openTime": {
-						"type": "string",
-						"format": "date-time"
-					},
-					"openPrice": {
-						"type": "number",
-						"format": "double"
-					},
-					"marketPrice": {
-						"type": "number",
-						"format": "double"
-					},
-					"purchaseValue": {
-						"type": "number",
-						"format": "double"
-					},
-					"commission": {
-						"type": "number",
-						"format": "double",
-						"nullable": true
-					},
-					"swap": {
-						"type": "number",
-						"format": "double",
-						"nullable": true
-					},
-					"rollover": {
-						"type": "number",
-						"format": "double",
-						"nullable": true
-					},
-					"grossPL": {
-						"type": "number",
-						"format": "double",
-						"nullable": true
-					},
-					"comment": {
-						"type": "string",
-						"nullable": true
-					},
-					"createdAt": {
-						"type": "string",
-						"format": "date-time",
-						"nullable": true
-					}
-				},
-				"required": [
-					"id",
-					"xtbId",
-					"symbol",
-					"type",
-					"volume",
-					"openTime",
-					"openPrice",
-					"marketPrice",
-					"purchaseValue",
-					"commission",
-					"swap",
-					"rollover",
-					"grossPL",
-					"comment",
-					"createdAt"
-				],
-				"type": "object",
-				"additionalProperties": true
-			},
-			"ErrorCode": {
-				"enum": [
-					"VALIDATION_ERROR",
-					"AUTHENTICATION_FAILED",
-					"AUTHORIZATION_FAILED",
-					"RESOURCE_NOT_FOUND",
-					"DUPLICATE_RESOURCE",
-					"RATE_LIMIT_EXCEEDED",
-					"INVALID_INPUT",
-					"INTERNAL_SERVER_ERROR",
-					"DATABASE_CONNECTION_ERROR",
-					"EXTERNAL_SERVICE_ERROR",
-					"SERVICE_UNAVAILABLE"
-				],
-				"type": "string"
-			},
-			"Error": {
-				"properties": {
-					"name": {
-						"type": "string"
-					},
-					"message": {
-						"type": "string"
-					},
-					"stack": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"name",
-					"message"
-				],
-				"type": "object",
-				"additionalProperties": true
-			},
-			"AppError": {
-				"properties": {
-					"name": {
-						"type": "string"
-					},
-					"message": {
-						"type": "string"
-					},
-					"stack": {
-						"type": "string"
-					},
-					"errorCode": {
-						"$ref": "#/components/schemas/ErrorCode"
-					},
-					"statusCode": {
-						"type": "number",
-						"format": "double"
-					},
-					"status": {
-						"type": "string",
-						"enum": [
-							"fail",
-							"error"
-						]
-					},
-					"cause": {
-						"$ref": "#/components/schemas/Error"
-					},
-					"timestamp": {
-						"type": "string"
-					},
-					"isOperational": {
-						"type": "boolean",
-						"default": true
-					},
-					"requestId": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"name",
-					"message",
-					"errorCode",
-					"statusCode",
-					"status",
-					"timestamp"
-				],
-				"type": "object",
-				"additionalProperties": true
-			},
-			"TransactionCreate": {
-				"properties": {
-					"comment": {
-						"type": "string"
-					},
-					"grossPL": {
-						"type": "number",
-						"format": "double"
-					},
-					"rollover": {
-						"type": "number",
-						"format": "double"
-					},
-					"swap": {
-						"type": "number",
-						"format": "double"
-					},
-					"commission": {
-						"type": "number",
-						"format": "double"
-					},
-					"purchaseValue": {
-						"type": "number",
-						"format": "double"
-					},
-					"marketPrice": {
-						"type": "number",
-						"format": "double"
-					},
-					"openPrice": {
-						"type": "number",
-						"format": "double"
-					},
-					"openTime": {
-						"type": "string",
-						"format": "date-time"
-					},
-					"volume": {
-						"type": "number",
-						"format": "double"
-					},
-					"type": {
-						"$ref": "#/components/schemas/TransactionType"
-					},
-					"symbol": {
-						"type": "string"
-					},
-					"xtbId": {
-						"type": "number",
-						"format": "double"
-					}
-				},
-				"required": [
-					"purchaseValue",
-					"marketPrice",
-					"openPrice",
-					"openTime",
-					"volume",
-					"type",
-					"symbol",
-					"xtbId"
-				],
-				"type": "object"
-			},
-			"Partial_Omit_TransactionCreate.id-or-createdAt__": {
-				"properties": {
-					"symbol": {
-						"type": "string"
-					},
-					"xtbId": {
-						"type": "number",
-						"format": "double"
-					},
-					"type": {
-						"$ref": "#/components/schemas/TransactionType"
-					},
-					"volume": {
-						"type": "number",
-						"format": "double"
-					},
-					"openTime": {
-						"type": "string",
-						"format": "date-time"
-					},
-					"openPrice": {
-						"type": "number",
-						"format": "double"
-					},
-					"marketPrice": {
-						"type": "number",
-						"format": "double"
-					},
-					"purchaseValue": {
-						"type": "number",
-						"format": "double"
-					},
-					"commission": {
-						"type": "number",
-						"format": "double"
-					},
-					"swap": {
-						"type": "number",
-						"format": "double"
-					},
-					"rollover": {
-						"type": "number",
-						"format": "double"
-					},
-					"grossPL": {
-						"type": "number",
-						"format": "double"
-					},
-					"comment": {
-						"type": "string"
-					}
-				},
-				"type": "object",
-				"description": "Make all properties in T optional"
-			},
-			"TransactionUpdate": {
-				"$ref": "#/components/schemas/Partial_Omit_TransactionCreate.id-or-createdAt__"
-			},
-			"Statistics": {
-				"properties": {
-					"symbol": {
-						"type": "string"
-					},
-					"totalVolume": {
-						"type": "number",
-						"format": "double"
-					},
-					"totalCost": {
-						"type": "number",
-						"format": "double"
-					},
-					"currentValue": {
-						"type": "number",
-						"format": "double"
-					},
-					"avgPrice": {
-						"type": "number",
-						"format": "double"
-					},
-					"grossPL": {
-						"type": "number",
-						"format": "double"
-					}
-				},
-				"required": [
-					"symbol",
-					"totalVolume",
-					"totalCost",
-					"currentValue",
-					"avgPrice",
-					"grossPL"
-				],
-				"type": "object",
-				"additionalProperties": true
-			},
-			"TimelinePoint": {
-				"properties": {
-					"date": {
-						"type": "string"
-					},
-					"value": {
-						"type": "number",
-						"format": "double"
-					}
-				},
-				"required": [
-					"date",
-					"value"
-				],
-				"type": "object",
-				"additionalProperties": true
-			},
-			"ImportResponse": {
-				"properties": {
-					"imported": {
-						"type": "number",
-						"format": "double"
-					},
-					"preview": {
-						"items": {
-							"$ref": "#/components/schemas/Transaction"
-						},
-						"type": "array"
-					}
-				},
-				"required": [
-					"imported",
-					"preview"
-				],
-				"type": "object",
-				"additionalProperties": true
-			},
-			"ServiceStatus": {
-				"enum": [
-					"healthy",
-					"unhealthy"
-				],
-				"type": "string"
-			},
-			"SystemHealth": {
-				"properties": {
-					"server": {
-						"$ref": "#/components/schemas/ServiceStatus"
-					},
-					"database": {
-						"$ref": "#/components/schemas/ServiceStatus"
-					},
-					"message": {
-						"type": "string"
-					},
-					"timestamp": {
-						"type": "string"
-					}
-				},
-				"required": [
-					"server",
-					"database",
-					"timestamp"
-				],
-				"type": "object",
-				"additionalProperties": true
-			}
-		},
-		"securitySchemes": {}
-	},
-	"info": {
-		"title": "finance-backend",
-		"version": "1.0.0",
-		"license": {
-			"name": "ISC"
-		},
-		"contact": {}
-	},
-	"paths": {
-		"/transactions": {
-			"post": {
-				"operationId": "Create",
-				"responses": {
-					"201": {
-						"description": "Created",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/Transaction"
-								},
-								"examples": {
-									"Example 1": {
-										"value": {
-											"symbol": "AAPL",
-											"type": "BUY",
-											"volume": 10,
-											"openTime": "2025-01-01T10:00:00.000Z",
-											"openPrice": 150.5,
-											"marketPrice": 155,
-											"purchaseValue": 1505,
-											"commission": 0,
-											"swap": 0,
-											"rollover": 0,
-											"grossPL": 45,
-											"comment": "Initial buy",
-											"xtbId": 123456
-										}
-									}
-								}
-							}
-						}
-					},
-					"400": {
-						"description": "Invalid input",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/AppError"
-								}
-							}
-						}
-					},
-					"500": {
-						"description": "Internal server error",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/AppError"
-								}
-							}
-						}
-					}
-				},
-				"description": "Tworzy nową transakcję w systemie.",
-				"tags": [
-					"Transactions"
-				],
-				"security": [],
-				"parameters": [],
-				"requestBody": {
-					"description": "Obiekt transakcji do utworzenia",
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/TransactionCreate",
-								"description": "Obiekt transakcji do utworzenia"
-							}
-						}
-					}
-				}
-			},
-			"get": {
-				"operationId": "GetAll",
-				"responses": {
-					"200": {
-						"description": "Tablica transakcji",
-						"content": {
-							"application/json": {
-								"schema": {
-									"items": {
-										"$ref": "#/components/schemas/Transaction"
-									},
-									"type": "array"
-								}
-							}
-						}
-					},
-					"500": {
-						"description": "Internal server error",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/AppError"
-								}
-							}
-						}
-					}
-				},
-				"description": "Pobiera listę wszystkich transakcji.",
-				"tags": [
-					"Transactions"
-				],
-				"security": [],
-				"parameters": []
-			}
-		},
-		"/transactions/{id}": {
-			"get": {
-				"operationId": "GetById",
-				"responses": {
-					"200": {
-						"description": "Obiekt transakcji",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/Transaction"
-								}
-							}
-						}
-					},
-					"404": {
-						"description": "Transaction not found",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/AppError"
-								}
-							}
-						}
-					},
-					"500": {
-						"description": "Internal server error",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/AppError"
-								}
-							}
-						}
-					}
-				},
-				"description": "Pobiera szczegóły transakcji na podstawie jej ID.",
-				"tags": [
-					"Transactions"
-				],
-				"security": [],
-				"parameters": [
-					{
-						"description": "Identyfikator transakcji",
-						"in": "path",
-						"name": "id",
-						"required": true,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
-					}
-				]
-			},
-			"put": {
-				"operationId": "Update",
-				"responses": {
-					"200": {
-						"description": "Zaktualizowany biekt transakcji",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/Transaction"
-								}
-							}
-						}
-					},
-					"400": {
-						"description": "Invalid request body",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/AppError"
-								}
-							}
-						}
-					},
-					"404": {
-						"description": "Transaction not found",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/AppError"
-								}
-							}
-						}
-					},
-					"500": {
-						"description": "Internal server error",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/AppError"
-								}
-							}
-						}
-					}
-				},
-				"description": "Aktualizuje istniejącą transakcję na podstawie jej ID.",
-				"tags": [
-					"Transactions"
-				],
-				"security": [],
-				"parameters": [
-					{
-						"description": "Identyfikator transakcji",
-						"in": "path",
-						"name": "id",
-						"required": true,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
-					}
-				],
-				"requestBody": {
-					"description": "Dane transakcji do zaktualizowania (tylko pola, które chcesz zmienić)",
-					"required": true,
-					"content": {
-						"application/json": {
-							"schema": {
-								"$ref": "#/components/schemas/TransactionUpdate",
-								"description": "Dane transakcji do zaktualizowania (tylko pola, które chcesz zmienić)"
-							}
-						}
-					}
-				}
-			},
-			"delete": {
-				"operationId": "Delete",
-				"responses": {
-					"204": {
-						"description": "No Content"
-					},
-					"404": {
-						"description": "Transaction not found",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/AppError"
-								}
-							}
-						}
-					},
-					"500": {
-						"description": "Internal server error",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/AppError"
-								}
-							}
-						}
-					}
-				},
-				"description": "Usuwa transakcję na podstawie jej ID.",
-				"tags": [
-					"Transactions"
-				],
-				"security": [],
-				"parameters": [
-					{
-						"description": "Identyfikator transakcji",
-						"in": "path",
-						"name": "id",
-						"required": true,
-						"schema": {
-							"format": "double",
-							"type": "number"
-						}
-					}
-				]
-			}
-		},
-		"/statistics": {
-			"get": {
-				"operationId": "GetStats",
-				"responses": {
-					"200": {
-						"description": "OK",
-						"content": {
-							"application/json": {
-								"schema": {
-									"items": {
-										"$ref": "#/components/schemas/Statistics"
-									},
-									"type": "array"
-								},
-								"examples": {
-									"Example 1": {
-										"value": [
-											{
-												"symbol": "AAPL",
-												"totalVolume": 120,
-												"totalCost": 18000,
-												"currentValue": 20000,
-												"avgPrice": 150,
-												"grossPL": 2000
-											},
-											{
-												"symbol": "CSPX.UK",
-												"totalVolume": 1.2,
-												"totalCost": 700,
-												"currentValue": 850,
-												"avgPrice": 583.3,
-												"grossPL": 150
-											}
-										]
-									}
-								}
-							}
-						}
-					},
-					"500": {
-						"description": "Internal server error",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/AppError"
-								}
-							}
-						}
-					}
-				},
-				"description": "Pobiera aktualne statystyki portfela.\n\nZwraca listę pozycji w portfelu wraz z:\n- symbolem,\n- łącznym wolumenem,\n- średnią ceną zakupu,\n- bieżącą wartością,\n- zyskiem/stratą brutto.",
-				"tags": [
-					"Statistics"
-				],
-				"security": [],
-				"parameters": []
-			}
-		},
-		"/statistics/timeline": {
-			"get": {
-				"operationId": "GetTimeline",
-				"responses": {
-					"200": {
-						"description": "OK",
-						"content": {
-							"application/json": {
-								"schema": {
-									"items": {
-										"$ref": "#/components/schemas/TimelinePoint"
-									},
-									"type": "array"
-								},
-								"examples": {
-									"Example 1": {
-										"value": [
-											{
-												"date": "2025-01-01",
-												"value": 10000
-											},
-											{
-												"date": "2025-02-01",
-												"value": 12000
-											},
-											{
-												"date": "2025-03-01",
-												"value": 15000
-											}
-										]
-									}
-								}
-							}
-						}
-					},
-					"500": {
-						"description": "Internal server error",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/AppError"
-								}
-							}
-						}
-					}
-				},
-				"description": "Pobiera historię wartości portfela w czasie.\n\nZwraca tablicę punktów czasowych (data + wartość portfela).",
-				"tags": [
-					"Statistics"
-				],
-				"security": [],
-				"parameters": []
-			}
-		},
-		"/import": {
-			"post": {
-				"operationId": "ImportFile",
-				"responses": {
-					"200": {
-						"description": "Import successful",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/ImportResponse"
-								},
-								"examples": {
-									"Example 1": {
-										"value": {
-											"imported": 42,
-											"preview": [
-												{
-													"id": 1,
-													"symbol": "AAPL",
-													"type": "BUY",
-													"volume": 10,
-													"openTime": "2025-01-01T10:00:00.000Z",
-													"openPrice": 150.5,
-													"marketPrice": 155,
-													"purchaseValue": 1505,
-													"commission": 0,
-													"swap": 0,
-													"rollover": 0,
-													"grossPL": 45,
-													"comment": "Initial buy",
-													"xtbId": 123456,
-													"createdAt": "2025-01-01T10:00:00.000Z"
-												}
-											]
-										}
-									}
-								}
-							}
-						}
-					},
-					"400": {
-						"description": "No file provided",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/AppError"
-								}
-							}
-						}
-					},
-					"500": {
-						"description": "Internal server error",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/AppError"
-								}
-							}
-						}
-					}
-				},
-				"description": "Importuje transakcje z pliku Excel.\n\nEndpoint przyjmuje plik w formacie `multipart/form-data` (pole `file`).\nZwraca liczbę zaimportowanych transakcji oraz podgląd pierwszych 5.",
-				"tags": [
-					"Import"
-				],
-				"security": [],
-				"parameters": [],
-				"requestBody": {
-					"required": true,
-					"content": {
-						"multipart/form-data": {
-							"schema": {
-								"type": "object",
-								"properties": {
-									"file": {
-										"type": "string",
-										"format": "binary",
-										"description": "Plik Excel przesłany w formularzu"
-									}
-								},
-								"required": [
-									"file"
-								]
-							}
-						}
-					}
-				}
-			}
-		},
-		"/health": {
-			"get": {
-				"operationId": "GetStatus",
-				"responses": {
-					"200": {
-						"description": "OK",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/SystemHealth"
-								},
-								"examples": {
-									"Example 1": {
-										"value": {
-											"server": "healthy",
-											"database": "healthy",
-											"timestamp": "2025-09-02T00:45:00.000Z"
-										}
-									}
-								}
-							}
-						}
-					},
-					"500": {
-						"description": "Internal server error",
-						"content": {
-							"application/json": {
-								"schema": {
-									"$ref": "#/components/schemas/AppError"
-								}
-							}
-						}
-					}
-				},
-				"description": "Sprawdza status działania aplikacji i jej zależności.\n\nZwraca informacje o:\n- statusie aplikacji\n- statusie połączenia z bazą danych,\n- znaczniku czasu.",
-				"tags": [
-					"Health"
-				],
-				"security": [],
-				"parameters": []
-			}
-		}
-	},
-	"servers": [
-		{
-			"url": "/"
-		}
-	]
+  "openapi": "3.0.0",
+  "components": {
+    "examples": {},
+    "headers": {},
+    "parameters": {},
+    "requestBodies": {},
+    "responses": {},
+    "schemas": {
+      "TransactionType": {
+        "enum": ["BUY", "SELL"],
+        "type": "string"
+      },
+      "Transaction": {
+        "properties": {
+          "id": {
+            "type": "number",
+            "format": "double"
+          },
+          "xtbId": {
+            "type": "number",
+            "format": "double"
+          },
+          "symbol": {
+            "type": "string"
+          },
+          "type": {
+            "$ref": "#/components/schemas/TransactionType"
+          },
+          "volume": {
+            "type": "number",
+            "format": "double"
+          },
+          "openTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "openPrice": {
+            "type": "number",
+            "format": "double"
+          },
+          "marketPrice": {
+            "type": "number",
+            "format": "double"
+          },
+          "purchaseValue": {
+            "type": "number",
+            "format": "double"
+          },
+          "commission": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "swap": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "rollover": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "grossPL": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "comment": {
+            "type": "string",
+            "nullable": true
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "required": [
+          "id",
+          "xtbId",
+          "symbol",
+          "type",
+          "volume",
+          "openTime",
+          "openPrice",
+          "marketPrice",
+          "purchaseValue",
+          "commission",
+          "swap",
+          "rollover",
+          "grossPL",
+          "comment",
+          "createdAt"
+        ],
+        "type": "object"
+      },
+      "ErrorCode": {
+        "enum": [
+          "VALIDATION_ERROR",
+          "AUTHENTICATION_FAILED",
+          "AUTHORIZATION_FAILED",
+          "RESOURCE_NOT_FOUND",
+          "DUPLICATE_RESOURCE",
+          "RATE_LIMIT_EXCEEDED",
+          "INVALID_INPUT",
+          "INTERNAL_SERVER_ERROR",
+          "DATABASE_CONNECTION_ERROR",
+          "EXTERNAL_SERVICE_ERROR",
+          "SERVICE_UNAVAILABLE"
+        ],
+        "type": "string"
+      },
+      "Error": {
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "stack": {
+            "type": "string"
+          }
+        },
+        "required": ["name", "message"],
+        "type": "object"
+      },
+      "AppError": {
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "stack": {
+            "type": "string"
+          },
+          "errorCode": {
+            "$ref": "#/components/schemas/ErrorCode"
+          },
+          "statusCode": {
+            "type": "number",
+            "format": "double"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["fail", "error"]
+          },
+          "cause": {
+            "$ref": "#/components/schemas/Error"
+          },
+          "timestamp": {
+            "type": "string"
+          },
+          "isOperational": {
+            "type": "boolean",
+            "default": true
+          },
+          "requestId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "message",
+          "errorCode",
+          "statusCode",
+          "status",
+          "timestamp"
+        ],
+        "type": "object"
+      },
+      "TransactionCreate": {
+        "properties": {
+          "comment": {
+            "type": "string"
+          },
+          "grossPL": {
+            "type": "number",
+            "format": "double"
+          },
+          "rollover": {
+            "type": "number",
+            "format": "double"
+          },
+          "swap": {
+            "type": "number",
+            "format": "double"
+          },
+          "commission": {
+            "type": "number",
+            "format": "double"
+          },
+          "purchaseValue": {
+            "type": "number",
+            "format": "double"
+          },
+          "marketPrice": {
+            "type": "number",
+            "format": "double"
+          },
+          "openPrice": {
+            "type": "number",
+            "format": "double"
+          },
+          "openTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "volume": {
+            "type": "number",
+            "format": "double"
+          },
+          "type": {
+            "$ref": "#/components/schemas/TransactionType"
+          },
+          "symbol": {
+            "type": "string"
+          },
+          "xtbId": {
+            "type": "number",
+            "format": "double"
+          }
+        },
+        "required": [
+          "purchaseValue",
+          "marketPrice",
+          "openPrice",
+          "openTime",
+          "volume",
+          "type",
+          "symbol",
+          "xtbId"
+        ],
+        "type": "object"
+      },
+      "Partial_Omit_TransactionCreate.id-or-createdAt__": {
+        "properties": {
+          "symbol": {
+            "type": "string"
+          },
+          "xtbId": {
+            "type": "number",
+            "format": "double"
+          },
+          "type": {
+            "$ref": "#/components/schemas/TransactionType"
+          },
+          "volume": {
+            "type": "number",
+            "format": "double"
+          },
+          "openTime": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "openPrice": {
+            "type": "number",
+            "format": "double"
+          },
+          "marketPrice": {
+            "type": "number",
+            "format": "double"
+          },
+          "purchaseValue": {
+            "type": "number",
+            "format": "double"
+          },
+          "commission": {
+            "type": "number",
+            "format": "double"
+          },
+          "swap": {
+            "type": "number",
+            "format": "double"
+          },
+          "rollover": {
+            "type": "number",
+            "format": "double"
+          },
+          "grossPL": {
+            "type": "number",
+            "format": "double"
+          },
+          "comment": {
+            "type": "string"
+          }
+        },
+        "type": "object",
+        "description": "Make all properties in T optional"
+      },
+      "TransactionUpdate": {
+        "$ref": "#/components/schemas/Partial_Omit_TransactionCreate.id-or-createdAt__"
+      },
+      "Statistics": {
+        "properties": {
+          "symbol": {
+            "type": "string"
+          },
+          "totalVolume": {
+            "type": "number",
+            "format": "double"
+          },
+          "totalCost": {
+            "type": "number",
+            "format": "double"
+          },
+          "currentValue": {
+            "type": "number",
+            "format": "double"
+          },
+          "avgPrice": {
+            "type": "number",
+            "format": "double"
+          },
+          "grossPL": {
+            "type": "number",
+            "format": "double"
+          }
+        },
+        "required": [
+          "symbol",
+          "totalVolume",
+          "totalCost",
+          "currentValue",
+          "avgPrice",
+          "grossPL"
+        ],
+        "type": "object"
+      },
+      "TimelinePoint": {
+        "properties": {
+          "date": {
+            "type": "string"
+          },
+          "value": {
+            "type": "number",
+            "format": "double"
+          }
+        },
+        "required": ["date", "value"],
+        "type": "object"
+      },
+      "ImportResponse": {
+        "properties": {
+          "imported": {
+            "type": "number",
+            "format": "double"
+          },
+          "preview": {
+            "items": {
+              "$ref": "#/components/schemas/Transaction"
+            },
+            "type": "array"
+          }
+        },
+        "required": ["imported", "preview"],
+        "type": "object"
+      },
+      "ServiceStatus": {
+        "enum": ["healthy", "unhealthy"],
+        "type": "string"
+      },
+      "SystemHealth": {
+        "properties": {
+          "server": {
+            "$ref": "#/components/schemas/ServiceStatus"
+          },
+          "database": {
+            "$ref": "#/components/schemas/ServiceStatus"
+          },
+          "message": {
+            "type": "string"
+          },
+          "timestamp": {
+            "type": "string"
+          }
+        },
+        "required": ["server", "database", "timestamp"],
+        "type": "object"
+      }
+    },
+    "securitySchemes": {}
+  },
+  "info": {
+    "title": "finance-backend",
+    "version": "1.0.0",
+    "license": {
+      "name": "ISC"
+    },
+    "contact": {}
+  },
+  "paths": {
+    "/transactions": {
+      "post": {
+        "operationId": "Create",
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Transaction"
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "symbol": "AAPL",
+                      "type": "BUY",
+                      "volume": 10,
+                      "openTime": "2025-01-01T10:00:00.000Z",
+                      "openPrice": 150.5,
+                      "marketPrice": 155,
+                      "purchaseValue": 1505,
+                      "commission": 0,
+                      "swap": 0,
+                      "rollover": 0,
+                      "grossPL": 45,
+                      "comment": "Initial buy",
+                      "xtbId": 123456
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AppError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AppError"
+                }
+              }
+            }
+          }
+        },
+        "description": "Tworzy nową transakcję w systemie.",
+        "tags": ["Transactions"],
+        "security": [],
+        "parameters": [],
+        "requestBody": {
+          "description": "Obiekt transakcji do utworzenia",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TransactionCreate",
+                "description": "Obiekt transakcji do utworzenia"
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "operationId": "GetAll",
+        "responses": {
+          "200": {
+            "description": "Tablica transakcji",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/Transaction"
+                  },
+                  "type": "array"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AppError"
+                }
+              }
+            }
+          }
+        },
+        "description": "Pobiera listę wszystkich transakcji.",
+        "tags": ["Transactions"],
+        "security": [],
+        "parameters": []
+      }
+    },
+    "/transactions/{id}": {
+      "get": {
+        "operationId": "GetById",
+        "responses": {
+          "200": {
+            "description": "Obiekt transakcji",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Transaction"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Transaction not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AppError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AppError"
+                }
+              }
+            }
+          }
+        },
+        "description": "Pobiera szczegóły transakcji na podstawie jej ID.",
+        "tags": ["Transactions"],
+        "security": [],
+        "parameters": [
+          {
+            "description": "Identyfikator transakcji",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "double",
+              "type": "number"
+            }
+          }
+        ]
+      },
+      "put": {
+        "operationId": "Update",
+        "responses": {
+          "200": {
+            "description": "Zaktualizowany biekt transakcji",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Transaction"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request body",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AppError"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Transaction not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AppError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AppError"
+                }
+              }
+            }
+          }
+        },
+        "description": "Aktualizuje istniejącą transakcję na podstawie jej ID.",
+        "tags": ["Transactions"],
+        "security": [],
+        "parameters": [
+          {
+            "description": "Identyfikator transakcji",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "double",
+              "type": "number"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Dane transakcji do zaktualizowania (tylko pola, które chcesz zmienić)",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TransactionUpdate",
+                "description": "Dane transakcji do zaktualizowania (tylko pola, które chcesz zmienić)"
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "operationId": "Delete",
+        "responses": {
+          "204": {
+            "description": "No Content"
+          },
+          "404": {
+            "description": "Transaction not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AppError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AppError"
+                }
+              }
+            }
+          }
+        },
+        "description": "Usuwa transakcję na podstawie jej ID.",
+        "tags": ["Transactions"],
+        "security": [],
+        "parameters": [
+          {
+            "description": "Identyfikator transakcji",
+            "in": "path",
+            "name": "id",
+            "required": true,
+            "schema": {
+              "format": "double",
+              "type": "number"
+            }
+          }
+        ]
+      }
+    },
+    "/statistics": {
+      "get": {
+        "operationId": "GetStats",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/Statistics"
+                  },
+                  "type": "array"
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": [
+                      {
+                        "symbol": "AAPL",
+                        "totalVolume": 120,
+                        "totalCost": 18000,
+                        "currentValue": 20000,
+                        "avgPrice": 150,
+                        "grossPL": 2000
+                      },
+                      {
+                        "symbol": "CSPX.UK",
+                        "totalVolume": 1.2,
+                        "totalCost": 700,
+                        "currentValue": 850,
+                        "avgPrice": 583.3,
+                        "grossPL": 150
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AppError"
+                }
+              }
+            }
+          }
+        },
+        "description": "Pobiera aktualne statystyki portfela.\n\nZwraca listę pozycji w portfelu wraz z:\n- symbolem,\n- łącznym wolumenem,\n- średnią ceną zakupu,\n- bieżącą wartością,\n- zyskiem/stratą brutto.",
+        "tags": ["Statistics"],
+        "security": [],
+        "parameters": []
+      }
+    },
+    "/statistics/timeline": {
+      "get": {
+        "operationId": "GetTimeline",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": {
+                    "$ref": "#/components/schemas/TimelinePoint"
+                  },
+                  "type": "array"
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": [
+                      {
+                        "date": "2025-01-01",
+                        "value": 10000
+                      },
+                      {
+                        "date": "2025-02-01",
+                        "value": 12000
+                      },
+                      {
+                        "date": "2025-03-01",
+                        "value": 15000
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AppError"
+                }
+              }
+            }
+          }
+        },
+        "description": "Pobiera historię wartości portfela w czasie.\n\nZwraca tablicę punktów czasowych (data + wartość portfela).",
+        "tags": ["Statistics"],
+        "security": [],
+        "parameters": []
+      }
+    },
+    "/import": {
+      "post": {
+        "operationId": "ImportFile",
+        "responses": {
+          "200": {
+            "description": "Import successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImportResponse"
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "imported": 42,
+                      "preview": [
+                        {
+                          "id": 1,
+                          "symbol": "AAPL",
+                          "type": "BUY",
+                          "volume": 10,
+                          "openTime": "2025-01-01T10:00:00.000Z",
+                          "openPrice": 150.5,
+                          "marketPrice": 155,
+                          "purchaseValue": 1505,
+                          "commission": 0,
+                          "swap": 0,
+                          "rollover": 0,
+                          "grossPL": 45,
+                          "comment": "Initial buy",
+                          "xtbId": 123456,
+                          "createdAt": "2025-01-01T10:00:00.000Z"
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "No file provided",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AppError"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AppError"
+                }
+              }
+            }
+          }
+        },
+        "description": "Importuje transakcje z pliku Excel.\n\nEndpoint przyjmuje plik w formacie `multipart/form-data` (pole `file`).\nZwraca liczbę zaimportowanych transakcji oraz podgląd pierwszych 5.",
+        "tags": ["Import"],
+        "security": [],
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "Plik Excel przesłany w formularzu"
+                  }
+                },
+                "required": ["file"]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/health": {
+      "get": {
+        "operationId": "GetStatus",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SystemHealth"
+                },
+                "examples": {
+                  "Example 1": {
+                    "value": {
+                      "server": "healthy",
+                      "database": "healthy",
+                      "timestamp": "2025-09-02T00:45:00.000Z"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AppError"
+                }
+              }
+            }
+          }
+        },
+        "description": "Sprawdza status działania aplikacji i jej zależności.\n\nZwraca informacje o:\n- statusie aplikacji\n- statusie połączenia z bazą danych,\n- znaczniku czasu.",
+        "tags": ["Health"],
+        "security": [],
+        "parameters": []
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "/"
+    }
+  ]
 }

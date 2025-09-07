@@ -11,6 +11,7 @@ import * as dotenv from 'dotenv'
 import multer from 'multer'
 import cors from 'cors'
 import { AppDataSource } from './data-source'
+import './types'
 
 dotenv.config()
 

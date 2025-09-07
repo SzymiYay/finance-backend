@@ -2,4 +2,11 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type SystemHealth = Record<string, any>;
+import type { ServiceStatus } from './ServiceStatus';
+export type SystemHealth = {
+    server: ServiceStatus;
+    database: ServiceStatus;
+    message?: string;
+    timestamp: string;
+};
+

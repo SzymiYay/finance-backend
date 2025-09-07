@@ -2,4 +2,9 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type Error = Record<string, any>;
+export type Error = {
+    name: string;
+    message: string;
+    stack?: string;
+};
+
