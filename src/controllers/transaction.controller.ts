@@ -14,9 +14,17 @@ import {
   Example,
   Response,
   SuccessResponse,
-  Put
+  Put,
+  Queries
 } from 'tsoa'
-import { TransactionCreate, TransactionType, TransactionUpdate } from '../types/transaction'
+import {
+  CurrencyType,
+  TransactionCreate,
+  TransactionQuery,
+  TransactionType,
+  TransactionUpdate
+} from '../types/transaction'
+import { PaginatedResult } from '../types/pagination'
 
 @Route('transactions')
 @Tags('Transactions')
@@ -39,7 +47,9 @@ export class TransactionController extends Controller {
   @Response<AppError>(400, 'Invalid input')
   @Response<AppError>(500, 'Internal server error')
   @Example<TransactionCreate>({
+    accountId: 1,
     symbol: 'AAPL',
+    currency: CurrencyType.PLN,
     type: TransactionType.BUY,
     volume: 10,
     openTime: new Date('2025-01-01T10:00:00Z'),
@@ -65,8 +75,10 @@ export class TransactionController extends Controller {
    */
   @Get('/')
   @Response<AppError>(500, 'Internal server error')
-  public async getAll(): Promise<Transaction[]> {
-    return this.transactionService.getTransactions()
+  public async getAll(
+    @Queries() query: TransactionQuery
+  ): Promise<PaginatedResult<Transaction>> {
+    return this.transactionService.getTransactions(query)
   }
 
   /**

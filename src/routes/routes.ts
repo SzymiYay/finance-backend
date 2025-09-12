@@ -22,6 +22,11 @@ const multer = require('multer');
 // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 
 const models: TsoaRoute.Models = {
+    "CurrencyType": {
+        "dataType": "refEnum",
+        "enums": ["USD","EUR","PLN"],
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "TransactionType": {
         "dataType": "refEnum",
         "enums": ["BUY","SELL"],
@@ -31,7 +36,9 @@ const models: TsoaRoute.Models = {
         "dataType": "refObject",
         "properties": {
             "id": {"dataType":"double","required":true},
+            "accountId": {"dataType":"double","required":true},
             "xtbId": {"dataType":"double","required":true},
+            "currency": {"ref":"CurrencyType","required":true},
             "symbol": {"dataType":"string","required":true},
             "type": {"ref":"TransactionType","required":true},
             "volume": {"dataType":"double","required":true},
@@ -83,12 +90,39 @@ const models: TsoaRoute.Models = {
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "TransactionCreate": {
         "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"comment":{"dataType":"string"},"grossPL":{"dataType":"double"},"rollover":{"dataType":"double"},"swap":{"dataType":"double"},"commission":{"dataType":"double"},"purchaseValue":{"dataType":"double","required":true},"marketPrice":{"dataType":"double","required":true},"openPrice":{"dataType":"double","required":true},"openTime":{"dataType":"datetime","required":true},"volume":{"dataType":"double","required":true},"type":{"ref":"TransactionType","required":true},"symbol":{"dataType":"string","required":true},"xtbId":{"dataType":"double","required":true}},"validators":{}},
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"comment":{"dataType":"string"},"grossPL":{"dataType":"double"},"rollover":{"dataType":"double"},"swap":{"dataType":"double"},"commission":{"dataType":"double"},"purchaseValue":{"dataType":"double","required":true},"marketPrice":{"dataType":"double","required":true},"openPrice":{"dataType":"double","required":true},"openTime":{"dataType":"datetime","required":true},"volume":{"dataType":"double","required":true},"type":{"ref":"TransactionType","required":true},"symbol":{"dataType":"string","required":true},"currency":{"ref":"CurrencyType","required":true},"xtbId":{"dataType":"double","required":true},"accountId":{"dataType":"double","required":true}},"validators":{}},
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "PaginatedResult_Transaction_": {
+        "dataType": "refObject",
+        "properties": {
+            "data": {"dataType":"array","array":{"dataType":"refObject","ref":"Transaction"},"required":true},
+            "total": {"dataType":"double","required":true},
+            "limit": {"dataType":"double","required":true},
+            "offset": {"dataType":"double","required":true},
+        },
+        "additionalProperties": true,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "TransactionSortableFields": {
+        "dataType": "refAlias",
+        "type": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["id"]},{"dataType":"enum","enums":["accountId"]},{"dataType":"enum","enums":["currency"]},{"dataType":"enum","enums":["symbol"]},{"dataType":"enum","enums":["volume"]},{"dataType":"enum","enums":["openTime"]},{"dataType":"enum","enums":["openPrice"]},{"dataType":"enum","enums":["marketPrice"]},{"dataType":"enum","enums":["purchaseValue"]},{"dataType":"enum","enums":["grossPL"]},{"dataType":"enum","enums":["createdAt"]}],"validators":{}},
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "TransactionQuery": {
+        "dataType": "refObject",
+        "properties": {
+            "sortBy": {"ref":"TransactionSortableFields"},
+            "order": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["ASC"]},{"dataType":"enum","enums":["DESC"]}]},
+            "limit": {"dataType":"double"},
+            "offset": {"dataType":"double"},
+        },
+        "additionalProperties": true,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "Partial_Omit_TransactionCreate.id-or-createdAt__": {
         "dataType": "refAlias",
-        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"symbol":{"dataType":"string"},"xtbId":{"dataType":"double"},"type":{"ref":"TransactionType"},"volume":{"dataType":"double"},"openTime":{"dataType":"datetime"},"openPrice":{"dataType":"double"},"marketPrice":{"dataType":"double"},"purchaseValue":{"dataType":"double"},"commission":{"dataType":"double"},"swap":{"dataType":"double"},"rollover":{"dataType":"double"},"grossPL":{"dataType":"double"},"comment":{"dataType":"string"}},"validators":{}},
+        "type": {"dataType":"nestedObjectLiteral","nestedProperties":{"symbol":{"dataType":"string"},"accountId":{"dataType":"double"},"currency":{"ref":"CurrencyType"},"volume":{"dataType":"double"},"openTime":{"dataType":"datetime"},"openPrice":{"dataType":"double"},"marketPrice":{"dataType":"double"},"purchaseValue":{"dataType":"double"},"grossPL":{"dataType":"double"},"xtbId":{"dataType":"double"},"type":{"ref":"TransactionType"},"commission":{"dataType":"double"},"swap":{"dataType":"double"},"rollover":{"dataType":"double"},"comment":{"dataType":"string"}},"validators":{}},
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "TransactionUpdate": {
@@ -99,6 +133,7 @@ const models: TsoaRoute.Models = {
     "Statistics": {
         "dataType": "refObject",
         "properties": {
+            "currency": {"ref":"CurrencyType","required":true},
             "symbol": {"dataType":"string","required":true},
             "totalVolume": {"dataType":"double","required":true},
             "totalCost": {"dataType":"double","required":true},
@@ -197,6 +232,7 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsTransactionController_getAll: Record<string, TsoaRoute.ParameterSchema> = {
+                query: {"in":"queries","name":"query","required":true,"ref":"TransactionQuery"},
         };
         app.get('/transactions',
             ...(fetchMiddlewares<RequestHandler>(TransactionController)),

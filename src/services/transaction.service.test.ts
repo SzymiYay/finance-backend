@@ -2,6 +2,7 @@ import 'reflect-metadata'
 import { Transaction } from '../models/transaction.entity'
 import { ITransactionRepository } from '../repositories/transaction.repository'
 import {
+  CurrencyType,
   TransactionCreate,
   TransactionType,
   TransactionUpdate
@@ -12,7 +13,9 @@ const createMockTransaction = (
   overrides: Partial<Transaction> = {}
 ): Transaction => ({
   id: 1,
+  accountId: 1,
   xtbId: 100,
+  currency: CurrencyType.PLN,
   symbol: 'AAPL.US',
   type: TransactionType.BUY,
   volume: 10,
@@ -47,16 +50,63 @@ describe('TransactionSercie', () => {
 
   describe('getTransactions', () => {
     it('should call repository.findAll and return the result', async () => {
-      const mockTransactions = [
-        createMockTransaction({ id: 1 }),
-        createMockTransaction({ id: 2, symbol: 'MSFT.US' })
-      ]
-      mockTransactionRepo.findAll.mockResolvedValue(mockTransactions)
+      const mockResult = {
+        data: [
+          createMockTransaction({ id: 1 }),
+          createMockTransaction({ id: 2, symbol: 'MSFT.US' })
+        ],
+        total: 2,
+        limit: 10,
+        offset: 0
+      }
+      mockTransactionRepo.findAll.mockResolvedValue(mockResult)
 
       const result = await transactionService.getTransactions()
 
-      expect(result).toEqual(mockTransactions)
+      expect(result).toEqual(mockResult)
       expect(mockTransactionRepo.findAll).toHaveBeenCalledTimes(1)
+    })
+
+    it('should return default pagination when no params are passed', async () => {
+      const mockResult = {
+        data: [
+          createMockTransaction({ id: 1 }),
+          createMockTransaction({ id: 2, symbol: 'MSFT.US' })
+        ],
+        total: 2,
+        limit: 10,
+        offset: 0
+      }
+      mockTransactionRepo.findAll.mockResolvedValue(mockResult)
+
+      const result = await transactionService.getTransactions()
+
+      expect(result).toEqual(mockResult)
+      expect(mockTransactionRepo.findAll).toHaveBeenCalledWith({})
+    })
+
+    it('should pass pagination and sorting options to repository', async () => {
+      const mockResult = {
+        data: [
+          createMockTransaction({ id: 1 }),
+          createMockTransaction({ id: 2, symbol: 'MSFT.US' })
+        ],
+        total: 2,
+        limit: 10,
+        offset: 0
+      }
+      const query = {
+        sortBy: 'symbol',
+        order: 'ASC',
+        limit: 5,
+        offset: 10
+      } as const
+      mockTransactionRepo.findAll.mockResolvedValue(mockResult)
+
+      const result = await transactionService.getTransactions(query)
+
+      expect(result).toEqual(mockResult)
+      expect(mockTransactionRepo.findAll).toHaveBeenCalledWith(query)
     })
   })
 
@@ -76,6 +126,8 @@ describe('TransactionSercie', () => {
   describe('addTransaction', () => {
     it('should call repository.findAll and return the result', async () => {
       const transactionData: TransactionCreate = {
+        accountId: 1,
+        currency: CurrencyType.PLN,
         symbol: 'GOOGL.US',
         type: TransactionType.BUY,
         volume: 10,
@@ -102,7 +154,9 @@ describe('TransactionSercie', () => {
     it('should call repository.findAll and return the result', async () => {
       const transactionsData: TransactionCreate[] = [
         {
+          accountId: 1,
           xtbId: 1,
+          currency: CurrencyType.PLN,
           symbol: 'A',
           type: TransactionType.BUY,
           volume: 1,
@@ -112,7 +166,9 @@ describe('TransactionSercie', () => {
           purchaseValue: 100
         },
         {
+          accountId: 2,
           xtbId: 2,
+          currency: CurrencyType.PLN,
           symbol: 'B',
           type: TransactionType.SELL,
           volume: 2,

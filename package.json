@@ -14,12 +14,14 @@
     "generate:api": "openapi --input ./docs/swagger.json --output ./src/api",
     "tsoa:spec": "tsoa spec --configuration tsoa.json",
     "tsoa:routes": "tsoa routes --configuration tsoa.json",
-    "tsoa:build": "npm run tsoa:spec && npm run tsoa:routes",
+    "tsoa:clean": "sed -i '' '/\"additionalProperties\": true/d' docs/swagger.json",
+    "tsoa:build": "npm run tsoa:spec && npm run tsoa:routes && npm run tsoa:clean",
     "typeorm": "npx ts-node ./node_modules/typeorm/cli.js",
     "migration:generate": "sh -c 'npm run typeorm -- migration:generate -d src/data-source.ts ./migrations/$1' -",
     "migration:run": "npm run typeorm -- migration:run -d src/data-source.ts",
     "migration:revert": "npm run typeorm -- migration:revert -d src/data-source.ts",
-    "migration:status": "npm run typeorm -- migration:show -d src/data-source.ts"
+    "migration:status": "npm run typeorm -- migration:show -d src/data-source.ts",
+    "all": "npm run check && npm run tsoa:build && npm run generate:api"
   },
   "keywords": [],
   "author": "",

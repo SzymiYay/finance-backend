@@ -2,9 +2,11 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
+import type { PaginatedResult_Transaction_ } from '../models/PaginatedResult_Transaction_';
 import type { Partial_Omit_TransactionCreate_id_or_createdAt__ } from '../models/Partial_Omit_TransactionCreate_id_or_createdAt__';
 import type { Transaction } from '../models/Transaction';
 import type { TransactionCreate } from '../models/TransactionCreate';
+import type { TransactionSortableFields } from '../models/TransactionSortableFields';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
@@ -31,13 +33,28 @@ export class TransactionsService {
     }
     /**
      * Pobiera listę wszystkich transakcji.
-     * @returns Transaction Tablica transakcji
+     * @param sortBy
+     * @param order
+     * @param limit
+     * @param offset
+     * @returns PaginatedResult_Transaction_ Tablica transakcji
      * @throws ApiError
      */
-    public static getAll(): CancelablePromise<Array<Transaction>> {
+    public static getAll(
+        sortBy?: TransactionSortableFields,
+        order?: 'ASC' | 'DESC',
+        limit?: number,
+        offset?: number,
+    ): CancelablePromise<PaginatedResult_Transaction_> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/transactions',
+            query: {
+                'sortBy': sortBy,
+                'order': order,
+                'limit': limit,
+                'offset': offset,
+            },
             errors: {
                 500: `Internal server error`,
             },

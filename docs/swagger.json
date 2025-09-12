@@ -7,6 +7,10 @@
     "requestBodies": {},
     "responses": {},
     "schemas": {
+      "CurrencyType": {
+        "enum": ["USD", "EUR", "PLN"],
+        "type": "string"
+      },
       "TransactionType": {
         "enum": ["BUY", "SELL"],
         "type": "string"
@@ -17,9 +21,16 @@
             "type": "number",
             "format": "double"
           },
+          "accountId": {
+            "type": "number",
+            "format": "double"
+          },
           "xtbId": {
             "type": "number",
             "format": "double"
+          },
+          "currency": {
+            "$ref": "#/components/schemas/CurrencyType"
           },
           "symbol": {
             "type": "string"
@@ -79,7 +90,9 @@
         },
         "required": [
           "id",
+          "accountId",
           "xtbId",
+          "currency",
           "symbol",
           "type",
           "volume",
@@ -220,7 +233,14 @@
           "symbol": {
             "type": "string"
           },
+          "currency": {
+            "$ref": "#/components/schemas/CurrencyType"
+          },
           "xtbId": {
+            "type": "number",
+            "format": "double"
+          },
+          "accountId": {
             "type": "number",
             "format": "double"
           }
@@ -233,8 +253,70 @@
           "volume",
           "type",
           "symbol",
-          "xtbId"
+          "currency",
+          "xtbId",
+          "accountId"
         ],
+        "type": "object"
+      },
+      "PaginatedResult_Transaction_": {
+        "properties": {
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/Transaction"
+            },
+            "type": "array"
+          },
+          "total": {
+            "type": "number",
+            "format": "double"
+          },
+          "limit": {
+            "type": "number",
+            "format": "double"
+          },
+          "offset": {
+            "type": "number",
+            "format": "double"
+          }
+        },
+        "required": ["data", "total", "limit", "offset"],
+        "type": "object"
+      },
+      "TransactionSortableFields": {
+        "type": "string",
+        "enum": [
+          "id",
+          "accountId",
+          "currency",
+          "symbol",
+          "volume",
+          "openTime",
+          "openPrice",
+          "marketPrice",
+          "purchaseValue",
+          "grossPL",
+          "createdAt"
+        ]
+      },
+      "TransactionQuery": {
+        "properties": {
+          "sortBy": {
+            "$ref": "#/components/schemas/TransactionSortableFields"
+          },
+          "order": {
+            "type": "string",
+            "enum": ["ASC", "DESC"]
+          },
+          "limit": {
+            "type": "number",
+            "format": "double"
+          },
+          "offset": {
+            "type": "number",
+            "format": "double"
+          }
+        },
         "type": "object"
       },
       "Partial_Omit_TransactionCreate.id-or-createdAt__": {
@@ -242,12 +324,12 @@
           "symbol": {
             "type": "string"
           },
-          "xtbId": {
+          "accountId": {
             "type": "number",
             "format": "double"
           },
-          "type": {
-            "$ref": "#/components/schemas/TransactionType"
+          "currency": {
+            "$ref": "#/components/schemas/CurrencyType"
           },
           "volume": {
             "type": "number",
@@ -269,6 +351,17 @@
             "type": "number",
             "format": "double"
           },
+          "grossPL": {
+            "type": "number",
+            "format": "double"
+          },
+          "xtbId": {
+            "type": "number",
+            "format": "double"
+          },
+          "type": {
+            "$ref": "#/components/schemas/TransactionType"
+          },
           "commission": {
             "type": "number",
             "format": "double"
@@ -278,10 +371,6 @@
             "format": "double"
           },
           "rollover": {
-            "type": "number",
-            "format": "double"
-          },
-          "grossPL": {
             "type": "number",
             "format": "double"
           },
@@ -297,6 +386,9 @@
       },
       "Statistics": {
         "properties": {
+          "currency": {
+            "$ref": "#/components/schemas/CurrencyType"
+          },
           "symbol": {
             "type": "string"
           },
@@ -322,6 +414,7 @@
           }
         },
         "required": [
+          "currency",
           "symbol",
           "totalVolume",
           "totalCost",
@@ -408,7 +501,9 @@
                 "examples": {
                   "Example 1": {
                     "value": {
+                      "accountId": 1,
                       "symbol": "AAPL",
+                      "currency": "PLN",
                       "type": "BUY",
                       "volume": 10,
                       "openTime": "2025-01-01T10:00:00.000Z",
@@ -473,10 +568,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "items": {
-                    "$ref": "#/components/schemas/Transaction"
-                  },
-                  "type": "array"
+                  "$ref": "#/components/schemas/PaginatedResult_Transaction_"
                 }
               }
             }
@@ -495,7 +587,43 @@
         "description": "Pobiera listę wszystkich transakcji.",
         "tags": ["Transactions"],
         "security": [],
-        "parameters": []
+        "parameters": [
+          {
+            "in": "query",
+            "name": "sortBy",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/TransactionSortableFields"
+            }
+          },
+          {
+            "in": "query",
+            "name": "order",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": ["ASC", "DESC"]
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "format": "double",
+              "type": "number"
+            }
+          },
+          {
+            "in": "query",
+            "name": "offset",
+            "required": false,
+            "schema": {
+              "format": "double",
+              "type": "number"
+            }
+          }
+        ]
       }
     },
     "/transactions/{id}": {
@@ -683,6 +811,7 @@
                   "Example 1": {
                     "value": [
                       {
+                        "currency": "USD",
                         "symbol": "AAPL",
                         "totalVolume": 120,
                         "totalCost": 18000,
@@ -691,6 +820,7 @@
                         "grossPL": 2000
                       },
                       {
+                        "currency": "USD",
                         "symbol": "CSPX.UK",
                         "totalVolume": 1.2,
                         "totalCost": 700,
@@ -791,6 +921,8 @@
                       "preview": [
                         {
                           "id": 1,
+                          "accountId": 1,
+                          "currency": "PLN",
                           "symbol": "AAPL",
                           "type": "BUY",
                           "volume": 10,

@@ -12,7 +12,7 @@ import {
 } from 'tsoa'
 import { inject, injectable } from 'tsyringe'
 import { ImportResponse } from '../types/import'
-import { TransactionType } from '../types/transaction'
+import { CurrencyType, TransactionType } from '../types/transaction'
 
 @Route('import')
 @Tags('Import')
@@ -41,6 +41,8 @@ export class ImportController {
     preview: [
       {
         id: 1,
+        accountId: 1,
+        currency: CurrencyType.PLN,
         symbol: 'AAPL',
         type: TransactionType.BUY,
         volume: 10,

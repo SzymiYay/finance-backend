@@ -3,6 +3,7 @@ import { AppDataSource } from '../data-source'
 import { AppError } from '../errors/app.error'
 import { Transaction } from '../models/transaction.entity'
 import {
+  CurrencyType,
   TransactionCreate,
   TransactionType,
   TransactionUpdate
@@ -20,7 +21,9 @@ const createMockTransaction = (
   overrides: Partial<Transaction> = {}
 ): Transaction => ({
   id: 1,
+  accountId: 1,
   xtbId: 12345678,
+  currency: CurrencyType.PLN,
   symbol: 'TSLA.US',
   type: TransactionType.BUY,
   volume: 10,
@@ -45,7 +48,7 @@ describe('TransactionRepository', () => {
     mockRepository = {
       create: jest.fn(),
       save: jest.fn(),
-      find: jest.fn(),
+      findAndCount: jest.fn(),
       findOneBy: jest.fn(),
       merge: jest.fn(),
       delete: jest.fn()
@@ -62,7 +65,9 @@ describe('TransactionRepository', () => {
   describe('create', () => {
     it('should create and save a new transaction using provided data', async () => {
       const transactionData: TransactionCreate = {
+        accountId: 1,
         xtbId: 98765,
+        currency: CurrencyType.PLN,
         symbol: 'GOOGL.US',
         type: TransactionType.BUY,
         volume: 5,
@@ -90,34 +95,101 @@ describe('TransactionRepository', () => {
   })
 
   describe('findAll', () => {
-    it('should return an array of transactions ordered by openTime DESC', async () => {
-      const transactions = [
-        createMockTransaction({
-          id: 2,
-          openTime: new Date('2025-02-01T12:00:00Z')
-        }),
-        createMockTransaction({
-          id: 1,
-          openTime: new Date('2025-01-01T12:00:00Z')
-        })
-      ]
-      mockRepository.find.mockResolvedValue(transactions)
+    it('should return an array of transactions', async () => {
+      const mockResult = {
+        data: [
+          createMockTransaction({
+            id: 2,
+            openTime: new Date('2025-02-01T12:00:00Z')
+          }),
+          createMockTransaction({
+            id: 1,
+            openTime: new Date('2025-01-01T12:00:00Z')
+          })
+        ],
+        total: 2,
+        limit: 10,
+        offset: 0
+      }
+      mockRepository.findAndCount.mockResolvedValue([
+        mockResult.data,
+        mockResult.total
+      ])
 
-      const result = await transactionRepository.findAll()
+      const result = await transactionRepository.findAll({})
 
-      expect(mockRepository.find).toHaveBeenCalledWith({
-        order: { openTime: 'DESC' }
+      expect(mockRepository.findAndCount).toHaveBeenCalledWith({
+        order: { openTime: 'DESC' },
+        take: 10,
+        skip: 0
       })
-      expect(result).toEqual(transactions)
-      expect(result.length).toBe(2)
+      expect(result).toEqual(mockResult)
+      expect(result.total).toBe(2)
     })
 
-    it('should throw AppError.notFound if no transactions are found', async () => {
-      mockRepository.find.mockResolvedValue([])
+    it('should apply default limit=10 and offset=0 when not provided', async () => {
+      mockRepository.findAndCount.mockResolvedValue([[], 0])
 
-      await expect(transactionRepository.findAll()).rejects.toThrow()
+      const result = await transactionRepository.findAll({})
 
-      expect(AppError.notFound).toHaveBeenCalledWith('Transactions')
+      expect(mockRepository.findAndCount).toHaveBeenCalledWith({
+        order: { openTime: 'DESC' },
+        take: 10,
+        skip: 0
+      })
+      expect(result.limit).toBe(10)
+      expect(result.offset).toBe(0)
+    })
+
+    it('should apply custom limit and offset', async () => {
+      const mockData = [
+        createMockTransaction({ id: 1 }),
+        createMockTransaction({ id: 2 })
+      ]
+      const query = {
+        sortBy: 'symbol',
+        order: 'ASC',
+        limit: 5,
+        offset: 10
+      } as const
+      mockRepository.findAndCount.mockResolvedValue([mockData, 0])
+
+      const result = await transactionRepository.findAll(query)
+
+      expect(mockRepository.findAndCount).toHaveBeenCalledWith({
+        order: { symbol: 'ASC' },
+        take: 5,
+        skip: 10
+      })
+      expect(result.limit).toBe(5)
+      expect(result.offset).toBe(10)
+    })
+
+    it('should return data, total, limit and offset correctly', async () => {
+      const mockData = [createMockTransaction({ id: 3 })]
+      mockRepository.findAndCount.mockResolvedValue([mockData, 1])
+
+      const result = await transactionRepository.findAll({
+        sortBy: 'id',
+        order: 'DESC',
+        limit: 20,
+        offset: 40
+      })
+
+      expect(result).toStrictEqual({
+        data: mockData,
+        total: 1,
+        limit: 20,
+        offset: 40
+      })
+    })
+
+    it('should return an empty array if no transactions are found', async () => {
+      mockRepository.findAndCount.mockResolvedValue([[], 0])
+
+      const result = await transactionRepository.findAll({})
+
+      expect(result).toStrictEqual({ data: [], total: 0, limit: 10, offset: 0 })
     })
   })
 

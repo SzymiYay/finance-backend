@@ -2,11 +2,16 @@ import { injectable } from 'tsyringe'
 import { AppError } from '../errors/app.error'
 import { Transaction } from '../models/transaction.entity'
 import { AppDataSource } from '../data-source'
-import { TransactionCreate, TransactionUpdate } from '../types/transaction'
+import {
+  TransactionCreate,
+  TransactionQuery,
+  TransactionUpdate
+} from '../types/transaction'
+import { PaginatedResult } from '../types/pagination'
 
 export interface ITransactionRepository {
   create(transaction: TransactionCreate): Promise<Transaction>
-  findAll(): Promise<Transaction[]>
+  findAll(query: TransactionQuery): Promise<PaginatedResult<Transaction>>
   findById(id: number): Promise<Transaction | null>
   update(id: number, data: TransactionUpdate): Promise<Transaction>
   delete(id: number): Promise<void>
@@ -22,15 +27,23 @@ export class TransactionRepository implements ITransactionRepository {
     return saved
   }
 
-  async findAll(): Promise<Transaction[]> {
-    const transactions = await this.repo.find({
-      order: { openTime: 'DESC' }
+  async findAll(
+    query: TransactionQuery
+  ): Promise<PaginatedResult<Transaction>> {
+    const {
+      sortBy = 'openTime',
+      order = 'DESC',
+      limit = 10,
+      offset = 0
+    } = query || {}
+
+    const [transactions, total] = await this.repo.findAndCount({
+      order: { [sortBy]: order },
+      take: limit,
+      skip: offset
     })
 
-    if (!transactions || transactions.length === 0)
-      throw AppError.notFound('Transactions')
-
-    return transactions
+    return { data: transactions, total, limit, offset }
   }
 
   async findById(id: number): Promise<Transaction | null> {

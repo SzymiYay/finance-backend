@@ -4,15 +4,21 @@ import {
   Entity,
   PrimaryGeneratedColumn
 } from 'typeorm'
-import { TransactionType } from '../types/transaction'
+import { CurrencyType, TransactionType } from '../types/transaction'
 
 @Entity('transactions')
 export class Transaction {
   @PrimaryGeneratedColumn()
   id!: number
 
+  @Column({name: 'account_id'})
+  accountId!: number
+
   @Column({ name: 'xtb_id' })
   xtbId!: number
+
+  @Column()
+  currency!: CurrencyType
 
   @Column()
   symbol!: string

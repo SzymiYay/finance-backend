@@ -3,6 +3,7 @@ import { Get, Route, Tags, Response, Example, SuccessResponse } from 'tsoa'
 import { inject, injectable } from 'tsyringe'
 import type { Statistics, TimelinePoint } from '../types/statistics'
 import { AppError } from '../errors/app.error'
+import { CurrencyType } from '../types'
 
 @Route('statistics')
 @Tags('Statistics')
@@ -27,6 +28,7 @@ export class StatisticsController {
   @Response<AppError>(500, 'Internal server error')
   @Example<Statistics[]>([
     {
+      currency: CurrencyType.USD,
       symbol: 'AAPL',
       totalVolume: 120,
       totalCost: 18000,
@@ -35,6 +37,7 @@ export class StatisticsController {
       grossPL: 2000
     },
     {
+      currency: CurrencyType.USD,
       symbol: 'CSPX.UK',
       totalVolume: 1.2,
       totalCost: 700,

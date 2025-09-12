@@ -2,6 +2,7 @@ import 'reflect-metadata'
 import { StatisticsController } from './statistics.controller'
 import { StatisticsService } from '../services/statistics.service'
 import { Statistics, TimelinePoint } from '../types/statistics'
+import { CurrencyType } from '../types'
 
 jest.mock('../services/statistics.service')
 
@@ -21,6 +22,7 @@ describe('StatisticsController', () => {
     it('should call getPortfolioStats on the service and return the result', async () => {
       const mockStats: Statistics[] = [
         {
+          currency: CurrencyType.PLN, 
           symbol: 'AAPL',
           totalVolume: 10,
           totalCost: 1500,

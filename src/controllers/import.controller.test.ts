@@ -3,7 +3,11 @@ import { ImportController } from './import.controller'
 import { ExcelParserService } from '../services/excel.parser.service'
 import { TransactionService } from '../services/transaction.service'
 import { AppError } from '../errors/app.error'
-import { TransactionCreate, TransactionType } from '../types/transaction'
+import {
+  CurrencyType,
+  TransactionCreate,
+  TransactionType
+} from '../types/transaction'
 import { Transaction } from '../models/transaction.entity'
 import { Readable } from 'stream'
 
@@ -13,6 +17,8 @@ jest.mock('../errors/app.error')
 
 const createMockSavedTransaction = (id: number): Transaction => ({
   id,
+  accountId: 1,
+  currency: CurrencyType.PLN,
   symbol: `SYM${id}`,
   type: TransactionType.BUY,
   volume: 10,
@@ -32,7 +38,9 @@ const createMockSavedTransaction = (id: number): Transaction => ({
 export const createMockTransactionCreate = (
   overrides: Partial<TransactionCreate> = {}
 ): TransactionCreate => ({
+  accountId: 1,
   xtbId: 999,
+  currency: CurrencyType.PLN,
   symbol: 'DEFAULT.US',
   type: TransactionType.BUY,
   volume: 1,

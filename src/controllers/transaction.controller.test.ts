@@ -3,6 +3,7 @@ import { TransactionController } from './transaction.controller'
 import { TransactionService } from '../services/transaction.service'
 import { AppError } from '../errors/app.error'
 import {
+  CurrencyType,
   TransactionCreate,
   TransactionType,
   TransactionUpdate
@@ -14,6 +15,8 @@ jest.mock('../errors/app.error')
 
 const createMockTransaction = (id: number): Transaction => ({
   id,
+  accountId: 1,
+  currency: CurrencyType.PLN,
   symbol: `SYM${id}`,
   type: TransactionType.BUY,
   volume: 10,
@@ -52,6 +55,8 @@ describe('TransactionController', () => {
   describe('create', () => {
     it('should create a transaction, set status to 201, and return the created transaction', async () => {
       const transactionData: TransactionCreate = {
+        accountId: 1,
+        currency: CurrencyType.PLN,
         symbol: 'NEW.US',
         type: TransactionType.BUY,
         volume: 50,
@@ -77,14 +82,43 @@ describe('TransactionController', () => {
   })
 
   describe('getAll', () => {
+    it('should pass query params to service', async () => {
+      const mockResult = {
+        data: [createMockTransaction(1)],
+        total: 1,
+        limit: 5,
+        offset: 10
+      }
+      const query = {
+        sortBy: 'symbol',
+        order: 'ASC',
+        limit: 5,
+        offset: 10
+      } as const
+      mockedTransactionService.getTransactions.mockResolvedValue(mockResult)
+
+      const result = await transactionController.getAll(query)
+
+      expect(mockedTransactionService.getTransactions).toHaveBeenCalledWith(
+        query
+      )
+      expect(result).toEqual(mockResult)
+    })
+
     it('should return an array of all transactions', async () => {
       const transactions = [createMockTransaction(1), createMockTransaction(2)]
-      mockedTransactionService.getTransactions.mockResolvedValue(transactions)
+      const mockResult = {
+        data: transactions,
+        total: 2,
+        limit: 10,
+        offset: 0
+      }
+      mockedTransactionService.getTransactions.mockResolvedValue(mockResult)
 
-      const result = await transactionController.getAll()
+      const result = await transactionController.getAll({})
 
       expect(mockedTransactionService.getTransactions).toHaveBeenCalledTimes(1)
-      expect(result).toEqual(transactions)
+      expect(result).toEqual(mockResult)
     })
   })
 

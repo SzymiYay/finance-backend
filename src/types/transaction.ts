@@ -1,5 +1,7 @@
 export type TransactionCreate = {
+  accountId: number
   xtbId: number
+  currency: CurrencyType
   symbol: string
   type: TransactionType
   volume: number
@@ -22,3 +24,29 @@ export enum TransactionType {
   BUY = 'BUY',
   SELL = 'SELL'
 }
+
+export enum CurrencyType {
+  USD = 'USD',
+  EUR = 'EUR',
+  PLN = 'PLN'
+}
+
+export interface TransactionQuery {
+  sortBy?: TransactionSortableFields
+  order?: 'ASC' | 'DESC'
+  limit?: number
+  offset?: number
+}
+
+export type TransactionSortableFields =
+  | 'id'
+  | 'accountId'
+  | 'currency'
+  | 'symbol'
+  | 'volume'
+  | 'openTime'
+  | 'openPrice'
+  | 'marketPrice'
+  | 'purchaseValue'
+  | 'grossPL'
+  | 'createdAt'

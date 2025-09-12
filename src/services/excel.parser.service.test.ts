@@ -2,7 +2,7 @@ import 'reflect-metadata'
 import * as XLSX from 'xlsx'
 import { excelDateToJSDate } from '../utils/utils'
 import { ExcelParserService } from './excel.parser.service'
-import { TransactionType } from '../types/transaction'
+import { CurrencyType, TransactionType } from '../types/transaction'
 
 jest.mock('xlsx', () => ({
   read: jest.fn(),
@@ -26,6 +26,7 @@ describe('ExcelParserService', () => {
   it('should correctly parse valid transaction data from an Excel buffer', () => {
     const mockSheetData = [
       { __EMPTY: 'Some irrelevant header' },
+      { __EMPTY_7: 1234, __EMPTY_10: 'PLN' },
       { __EMPTY: 'Position', __EMPTY_1: 'Symbol' },
       {
         __EMPTY: 12345,
@@ -75,7 +76,9 @@ describe('ExcelParserService', () => {
 
     expect(result).toHaveLength(2)
     expect(result[0]).toEqual({
+      accountId: 1234,
       xtbId: 12345,
+      currency: CurrencyType.PLN,
       symbol: 'TSLA.US',
       type: TransactionType.BUY,
       volume: 10,

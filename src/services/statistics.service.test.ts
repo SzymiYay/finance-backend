@@ -3,7 +3,7 @@ import { TransactionService } from './transaction.service'
 import { StatisticsService } from './statistics.service'
 import { Transaction } from '../models/transaction.entity'
 import { roundCurrency, roundVolume } from '../utils/utils'
-import { TransactionType } from '../types/transaction'
+import { CurrencyType, TransactionType } from '../types/transaction'
 
 jest.mock('./transaction.service')
 
@@ -11,7 +11,9 @@ const createMockTransaction = (
   overrides: Partial<Transaction>
 ): Transaction => ({
   id: 1,
+  accountId: 1,
   xtbId: 100,
+  currency: CurrencyType.PLN,
   symbol: 'DEFAULT.US',
   type: TransactionType.BUY,
   volume: 10,
@@ -43,35 +45,38 @@ describe('StatisticsService', () => {
 
   describe('getPortfolioStats', () => {
     it('should calculate statistics correctly for multiple transactions', async () => {
-      const mockTransactions: Transaction[] = [
-        createMockTransaction({
-          symbol: 'AAPL.US',
-          type: TransactionType.BUY,
-          volume: 10,
-          openPrice: 150,
-          marketPrice: 170,
-          grossPL: 200
-        }),
-        createMockTransaction({
-          symbol: 'MSFT.US',
-          type: TransactionType.BUY,
-          volume: 5,
-          openPrice: 300,
-          marketPrice: 310,
-          grossPL: 50
-        }),
-        createMockTransaction({
-          symbol: 'AAPL.US',
-          type: TransactionType.SELL,
-          volume: 5,
-          openPrice: 160,
-          marketPrice: 170,
-          grossPL: 50
-        })
-      ]
-      mockedTransactionService.getTransactions.mockResolvedValue(
-        mockTransactions
-      )
+      const mockResult = {
+        data: [
+          createMockTransaction({
+            symbol: 'AAPL.US',
+            type: TransactionType.BUY,
+            volume: 10,
+            openPrice: 150,
+            marketPrice: 170,
+            grossPL: 200
+          }),
+          createMockTransaction({
+            symbol: 'MSFT.US',
+            type: TransactionType.BUY,
+            volume: 5,
+            openPrice: 300,
+            marketPrice: 310,
+            grossPL: 50
+          }),
+          createMockTransaction({
+            symbol: 'AAPL.US',
+            type: TransactionType.SELL,
+            volume: 5,
+            openPrice: 160,
+            marketPrice: 170,
+            grossPL: 50
+          })
+        ],
+        total: 3,
+        limit: 10,
+        offset: 0
+      }
+      mockedTransactionService.getTransactions.mockResolvedValue(mockResult)
 
       const result = await statisticsService.getPortfolioStats()
 
@@ -82,6 +87,7 @@ describe('StatisticsService', () => {
 
       expect(aaplStats).toBeDefined()
       expect(aaplStats).toEqual({
+        currency: CurrencyType.PLN,
         symbol: 'AAPL.US',
         totalVolume: roundVolume(5),
         totalCost: roundCurrency(700),
@@ -92,6 +98,7 @@ describe('StatisticsService', () => {
 
       expect(msftStats).toBeDefined()
       expect(msftStats).toEqual({
+        currency: CurrencyType.PLN,
         symbol: 'MSFT.US',
         totalVolume: roundVolume(5),
         totalCost: roundCurrency(1500),
@@ -102,7 +109,12 @@ describe('StatisticsService', () => {
     })
 
     it('should return an empty array if there are no transactions', async () => {
-      mockedTransactionService.getTransactions.mockResolvedValue([])
+      mockedTransactionService.getTransactions.mockResolvedValue({
+        data: [],
+        total: 0,
+        limit: 10,
+        offset: 0
+      })
 
       const result = await statisticsService.getPortfolioStats()
 
@@ -110,23 +122,26 @@ describe('StatisticsService', () => {
     })
 
     it('should handle zero total volume correctly', async () => {
-      const mockTransactions: Transaction[] = [
-        createMockTransaction({
-          symbol: 'ZERO.US',
-          type: TransactionType.BUY,
-          volume: 10,
-          openPrice: 100
-        }),
-        createMockTransaction({
-          symbol: 'ZERO.US',
-          type: TransactionType.SELL,
-          volume: 10,
-          openPrice: 110
-        })
-      ]
-      mockedTransactionService.getTransactions.mockResolvedValue(
-        mockTransactions
-      )
+      const mockResult = {
+        data: [
+          createMockTransaction({
+            symbol: 'ZERO.US',
+            type: TransactionType.BUY,
+            volume: 10,
+            openPrice: 100
+          }),
+          createMockTransaction({
+            symbol: 'ZERO.US',
+            type: TransactionType.SELL,
+            volume: 10,
+            openPrice: 110
+          })
+        ],
+        total: 2,
+        limit: 10,
+        offset: 0
+      }
+      mockedTransactionService.getTransactions.mockResolvedValue(mockResult)
 
       const result = await statisticsService.getPortfolioStats()
       const zeroStats = result.find((s) => s.symbol === 'ZERO.US')
@@ -139,37 +154,39 @@ describe('StatisticsService', () => {
 
   describe('getPortfolioTimeline', () => {
     it('should create a correctly sorted timeline with cumulative values', async () => {
-      const mockTransactions: Transaction[] = [
-        createMockTransaction({
-          symbol: 'AAPL.US',
-          type: TransactionType.BUY,
-          volume: 10,
-          openPrice: 150,
-          openTime: new Date('2025-02-15T10:00:00Z')
-        }),
-        createMockTransaction({
-          symbol: 'AAPL.US',
-          type: TransactionType.SELL,
-          volume: 5,
-          openPrice: 160,
-          openTime: new Date('2025-03-20T10:00:00Z')
-        }),
-        createMockTransaction({
-          symbol: 'MSFT.US',
-          type: TransactionType.BUY,
-          volume: 10,
-          openPrice: 300,
-          openTime: new Date('2025-01-10T10:00:00Z')
-        })
-      ]
-      mockedTransactionService.getTransactions.mockResolvedValue(
-        mockTransactions
-      )
+      const mockResult = {
+        data: [
+          createMockTransaction({
+            symbol: 'AAPL.US',
+            type: TransactionType.BUY,
+            volume: 10,
+            openPrice: 150,
+            openTime: new Date('2025-02-15T10:00:00Z')
+          }),
+          createMockTransaction({
+            symbol: 'AAPL.US',
+            type: TransactionType.SELL,
+            volume: 5,
+            openPrice: 160,
+            openTime: new Date('2025-03-20T10:00:00Z')
+          }),
+          createMockTransaction({
+            symbol: 'MSFT.US',
+            type: TransactionType.BUY,
+            volume: 10,
+            openPrice: 300,
+            openTime: new Date('2025-01-10T10:00:00Z')
+          })
+        ],
+        total: 3,
+        limit: 10,
+        offset: 0
+      }
+      mockedTransactionService.getTransactions.mockResolvedValue(mockResult)
 
       const result = await statisticsService.getPortfolioTimeline()
 
       expect(result).toHaveLength(3)
-
       expect(result).toEqual([
         { date: '2025-01-10', value: roundCurrency(3000) },
         { date: '2025-02-15', value: roundCurrency(4500) },
@@ -178,7 +195,14 @@ describe('StatisticsService', () => {
     })
 
     it('should return an empty array if there are no transactions', async () => {
-      mockedTransactionService.getTransactions.mockResolvedValue([])
+      const mockResult = {
+        data: [],
+        total: 0,
+        limit: 10,
+        offset: 0
+      }
+
+      mockedTransactionService.getTransactions.mockResolvedValue(mockResult)
 
       const result = await statisticsService.getPortfolioTimeline()
 

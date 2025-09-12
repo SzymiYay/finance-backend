@@ -4,13 +4,20 @@ import {
   ITransactionRepository,
   TransactionRepository
 } from '../repositories/transaction.repository'
-import { TransactionCreate, TransactionUpdate } from '../types/transaction'
+import {
+  TransactionCreate,
+  TransactionQuery,
+  TransactionUpdate
+} from '../types/transaction'
+import { PaginatedResult } from '../types/pagination'
 
 export interface ITransactionService {
   addTransaction(transaction: TransactionCreate): Promise<Transaction>
   addTransactions(transactions: TransactionCreate[]): Promise<Transaction[]>
   getTransaction(id: number): Promise<Transaction | null>
-  getTransactions(): Promise<Transaction[]>
+  getTransactions(
+    query?: TransactionQuery
+  ): Promise<PaginatedResult<Transaction>>
   updateTransaction(id: number, data: TransactionUpdate): Promise<Transaction>
   deleteTransaction(id: number): Promise<void>
 }
@@ -41,8 +48,10 @@ export class TransactionService implements ITransactionService {
     return this.transactionRepo.findById(id)
   }
 
-  async getTransactions(): Promise<Transaction[]> {
-    return this.transactionRepo.findAll()
+  async getTransactions(
+    query?: TransactionQuery
+  ): Promise<PaginatedResult<Transaction>> {
+    return this.transactionRepo.findAll(query || {})
   }
 
   async updateTransaction(

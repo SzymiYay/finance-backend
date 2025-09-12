@@ -2,7 +2,9 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
+import type { CurrencyType } from './CurrencyType';
 export type Statistics = {
+    currency: CurrencyType;
     symbol: string;
     totalVolume: number;
     totalCost: number;

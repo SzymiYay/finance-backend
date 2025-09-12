@@ -2,10 +2,13 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
+import type { CurrencyType } from './CurrencyType';
 import type { TransactionType } from './TransactionType';
 export type Transaction = {
     id: number;
+    accountId: number;
     xtbId: number;
+    currency: CurrencyType;
     symbol: string;
     type: TransactionType;
     volume: number;

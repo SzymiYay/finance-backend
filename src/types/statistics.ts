@@ -1,4 +1,7 @@
+import { CurrencyType } from './transaction'
+
 export interface Statistics {
+  currency: CurrencyType
   symbol: string
   totalVolume: number
   totalCost: number

@@ -10,12 +10,14 @@ export class StatisticsService {
   ) {}
 
   async getPortfolioStats(): Promise<Statistics[]> {
-    const transactions = await this.transactionService.getTransactions()
+    const { data: transactions } =
+      await this.transactionService.getTransactions()
     const groupedBySymbol: Record<string, Statistics> = {}
 
     for (const transaction of transactions) {
       if (!groupedBySymbol[transaction.symbol]) {
         groupedBySymbol[transaction.symbol] = {
+          currency: transaction.currency,
           symbol: transaction.symbol,
           totalVolume: 0,
           totalCost: 0,
@@ -59,7 +61,8 @@ export class StatisticsService {
   }
 
   async getPortfolioTimeline(): Promise<TimelinePoint[]> {
-    const transactions = await this.transactionService.getTransactions()
+    const { data: transactions } =
+      await this.transactionService.getTransactions()
     const transactionsSortedByDate = [...transactions].sort(
       (a, b) => new Date(a.openTime).getTime() - new Date(b.openTime).getTime()
     )
