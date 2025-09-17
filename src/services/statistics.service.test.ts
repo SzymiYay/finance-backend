@@ -80,10 +80,10 @@ describe('StatisticsService', () => {
 
       const result = await statisticsService.getPortfolioStats()
 
-      expect(result).toHaveLength(2)
+      expect(result.data).toHaveLength(2)
 
-      const aaplStats = result.find((s) => s.symbol === 'AAPL.US')
-      const msftStats = result.find((s) => s.symbol === 'MSFT.US')
+      const aaplStats = result.data.find((s) => s.symbol === 'AAPL.US')
+      const msftStats = result.data.find((s) => s.symbol === 'MSFT.US')
 
       expect(aaplStats).toBeDefined()
       expect(aaplStats).toEqual({
@@ -118,7 +118,7 @@ describe('StatisticsService', () => {
 
       const result = await statisticsService.getPortfolioStats()
 
-      expect(result).toEqual([])
+      expect(result.data).toEqual([])
     })
 
     it('should handle zero total volume correctly', async () => {
@@ -144,7 +144,7 @@ describe('StatisticsService', () => {
       mockedTransactionService.getTransactions.mockResolvedValue(mockResult)
 
       const result = await statisticsService.getPortfolioStats()
-      const zeroStats = result.find((s) => s.symbol === 'ZERO.US')
+      const zeroStats = result.data.find((s) => s.symbol === 'ZERO.US')
 
       expect(zeroStats).toBeDefined()
       expect(zeroStats?.totalVolume).toBe(0)

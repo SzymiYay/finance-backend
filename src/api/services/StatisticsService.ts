@@ -2,7 +2,8 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { Statistics } from '../models/Statistics';
+import type { PaginatedResult_Statistics_ } from '../models/PaginatedResult_Statistics_';
+import type { StatisticsSortableFields } from '../models/StatisticsSortableFields';
 import type { TimelinePoint } from '../models/TimelinePoint';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
@@ -17,13 +18,28 @@ export class StatisticsService {
      * - średnią ceną zakupu,
      * - bieżącą wartością,
      * - zyskiem/stratą brutto.
-     * @returns Statistics OK
+     * @param sortBy
+     * @param order
+     * @param limit
+     * @param offset
+     * @returns PaginatedResult_Statistics_ OK
      * @throws ApiError
      */
-    public static getStats(): CancelablePromise<Array<Statistics>> {
+    public static getStats(
+        sortBy?: StatisticsSortableFields,
+        order?: 'ASC' | 'DESC',
+        limit?: number,
+        offset?: number,
+    ): CancelablePromise<PaginatedResult_Statistics_> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/statistics',
+            query: {
+                'sortBy': sortBy,
+                'order': order,
+                'limit': limit,
+                'offset': offset,
+            },
             errors: {
                 500: `Internal server error`,
             },

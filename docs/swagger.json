@@ -424,6 +424,62 @@
         ],
         "type": "object"
       },
+      "PaginatedResult_Statistics_": {
+        "properties": {
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/Statistics"
+            },
+            "type": "array"
+          },
+          "total": {
+            "type": "number",
+            "format": "double"
+          },
+          "limit": {
+            "type": "number",
+            "format": "double"
+          },
+          "offset": {
+            "type": "number",
+            "format": "double"
+          }
+        },
+        "required": ["data", "total", "limit", "offset"],
+        "type": "object"
+      },
+      "StatisticsSortableFields": {
+        "type": "string",
+        "enum": [
+          "currency",
+          "symbol",
+          "totalVolume",
+          "totalCost",
+          "currentValue",
+          "avgPrice",
+          "grossPL"
+        ]
+      },
+      "StatisticsQuery": {
+        "properties": {
+          "sortBy": {
+            "$ref": "#/components/schemas/StatisticsSortableFields"
+          },
+          "order": {
+            "type": "string",
+            "enum": ["ASC", "DESC"]
+          },
+          "limit": {
+            "type": "number",
+            "format": "double"
+          },
+          "offset": {
+            "type": "number",
+            "format": "double"
+          }
+        },
+        "type": "object"
+      },
       "TimelinePoint": {
         "properties": {
           "date": {
@@ -802,10 +858,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "items": {
-                    "$ref": "#/components/schemas/Statistics"
-                  },
-                  "type": "array"
+                  "$ref": "#/components/schemas/PaginatedResult_Statistics_"
                 },
                 "examples": {
                   "Example 1": {
@@ -848,7 +901,43 @@
         "description": "Pobiera aktualne statystyki portfela.\n\nZwraca listę pozycji w portfelu wraz z:\n- symbolem,\n- łącznym wolumenem,\n- średnią ceną zakupu,\n- bieżącą wartością,\n- zyskiem/stratą brutto.",
         "tags": ["Statistics"],
         "security": [],
-        "parameters": []
+        "parameters": [
+          {
+            "in": "query",
+            "name": "sortBy",
+            "required": false,
+            "schema": {
+              "$ref": "#/components/schemas/StatisticsSortableFields"
+            }
+          },
+          {
+            "in": "query",
+            "name": "order",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": ["ASC", "DESC"]
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "format": "double",
+              "type": "number"
+            }
+          },
+          {
+            "in": "query",
+            "name": "offset",
+            "required": false,
+            "schema": {
+              "format": "double",
+              "type": "number"
+            }
+          }
+        ]
       }
     },
     "/statistics/timeline": {

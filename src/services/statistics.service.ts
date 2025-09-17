@@ -1,7 +1,9 @@
 import { inject, injectable } from 'tsyringe'
-import { Statistics, TimelinePoint } from '../types/statistics'
+import { Statistics, StatisticsQuery, TimelinePoint } from '../types/statistics'
 import { roundCurrency, roundVolume } from '../utils/utils'
 import { TransactionService } from './transaction.service'
+import { PaginatedResult } from '../types/pagination'
+import { off } from 'process'
 
 @injectable()
 export class StatisticsService {
@@ -9,7 +11,15 @@ export class StatisticsService {
     @inject(TransactionService) private transactionService: TransactionService
   ) {}
 
-  async getPortfolioStats(): Promise<Statistics[]> {
+  async getPortfolioStats(
+    query?: StatisticsQuery
+  ): Promise<PaginatedResult<Statistics>> {
+    const {
+      sortBy = 'symbol',
+      order = 'DESC',
+      limit = 10,
+      offset = 0
+    } = query || {}
     const { data: transactions } =
       await this.transactionService.getTransactions()
     const groupedBySymbol: Record<string, Statistics> = {}
@@ -57,7 +67,34 @@ export class StatisticsService {
       g.grossPL = roundCurrency(g.grossPL)
     }
 
-    return Object.values(groupedBySymbol)
+    const stats = Object.values(groupedBySymbol)
+
+    stats.sort((a, b) => {
+      const valA = a[sortBy]
+      const valB = b[sortBy]
+
+      if (typeof valA === 'number' && typeof valB === 'number') {
+        return order === 'ASC' ? valA - valB : valB - valA
+      }
+
+      if (typeof valA === 'string' && typeof valB === 'string') {
+        return order === 'ASC'
+          ? valA.localeCompare(valB)
+          : valB.localeCompare(valA)
+      }
+
+      return 0
+    })
+
+    const total = stats.length
+    const paginated = stats.slice(offset, offset + limit)
+
+    return {
+      data: paginated,
+      total,
+      limit,
+      offset
+    }
   }
 
   async getPortfolioTimeline(): Promise<TimelinePoint[]> {

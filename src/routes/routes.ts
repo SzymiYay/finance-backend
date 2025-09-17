@@ -144,6 +144,33 @@ const models: TsoaRoute.Models = {
         "additionalProperties": true,
     },
     // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "PaginatedResult_Statistics_": {
+        "dataType": "refObject",
+        "properties": {
+            "data": {"dataType":"array","array":{"dataType":"refObject","ref":"Statistics"},"required":true},
+            "total": {"dataType":"double","required":true},
+            "limit": {"dataType":"double","required":true},
+            "offset": {"dataType":"double","required":true},
+        },
+        "additionalProperties": true,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "StatisticsSortableFields": {
+        "dataType": "refAlias",
+        "type": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["currency"]},{"dataType":"enum","enums":["symbol"]},{"dataType":"enum","enums":["totalVolume"]},{"dataType":"enum","enums":["totalCost"]},{"dataType":"enum","enums":["currentValue"]},{"dataType":"enum","enums":["avgPrice"]},{"dataType":"enum","enums":["grossPL"]}],"validators":{}},
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
+    "StatisticsQuery": {
+        "dataType": "refObject",
+        "properties": {
+            "sortBy": {"ref":"StatisticsSortableFields"},
+            "order": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["ASC"]},{"dataType":"enum","enums":["DESC"]}]},
+            "limit": {"dataType":"double"},
+            "offset": {"dataType":"double"},
+        },
+        "additionalProperties": true,
+    },
+    // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
     "TimelinePoint": {
         "dataType": "refObject",
         "properties": {
@@ -373,6 +400,7 @@ export function RegisterRoutes(app: Router,opts?:{multer?:ReturnType<typeof mult
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
         const argsStatisticsController_getStats: Record<string, TsoaRoute.ParameterSchema> = {
+                query: {"in":"queries","name":"query","required":true,"ref":"StatisticsQuery"},
         };
         app.get('/statistics',
             ...(fetchMiddlewares<RequestHandler>(StatisticsController)),

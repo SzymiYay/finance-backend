@@ -3,6 +3,7 @@ import { StatisticsController } from './statistics.controller'
 import { StatisticsService } from '../services/statistics.service'
 import { Statistics, TimelinePoint } from '../types/statistics'
 import { CurrencyType } from '../types'
+import { PaginatedResult } from '../types/pagination'
 
 jest.mock('../services/statistics.service')
 
@@ -20,20 +21,25 @@ describe('StatisticsController', () => {
 
   describe('getStats', () => {
     it('should call getPortfolioStats on the service and return the result', async () => {
-      const mockStats: Statistics[] = [
-        {
-          currency: CurrencyType.PLN, 
-          symbol: 'AAPL',
-          totalVolume: 10,
-          totalCost: 1500,
-          currentValue: 1700,
-          avgPrice: 150,
-          grossPL: 200
-        }
-      ]
+      const mockStats: PaginatedResult<Statistics> = {
+        data: [
+          {
+            currency: CurrencyType.PLN,
+            symbol: 'AAPL',
+            totalVolume: 10,
+            totalCost: 1500,
+            currentValue: 1700,
+            avgPrice: 150,
+            grossPL: 200
+          }
+        ],
+        total: 1,
+        limit: 10,
+        offset: 0
+      }
       mockedStatisticsService.getPortfolioStats.mockResolvedValue(mockStats)
 
-      const result = await statisticsController.getStats()
+      const result = await statisticsController.getStats({})
 
       expect(mockedStatisticsService.getPortfolioStats).toHaveBeenCalledTimes(1)
       expect(result).toEqual(mockStats)
@@ -43,7 +49,7 @@ describe('StatisticsController', () => {
       const serviceError = new Error('Failed to calculate stats')
       mockedStatisticsService.getPortfolioStats.mockRejectedValue(serviceError)
 
-      await expect(statisticsController.getStats()).rejects.toThrow(
+      await expect(statisticsController.getStats({})).rejects.toThrow(
         'Failed to calculate stats'
       )
     })

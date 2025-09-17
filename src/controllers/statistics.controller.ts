@@ -1,9 +1,22 @@
 import { StatisticsService } from '../services/statistics.service'
-import { Get, Route, Tags, Response, Example, SuccessResponse } from 'tsoa'
+import {
+  Get,
+  Route,
+  Tags,
+  Response,
+  Example,
+  SuccessResponse,
+  Queries
+} from 'tsoa'
 import { inject, injectable } from 'tsyringe'
-import type { Statistics, TimelinePoint } from '../types/statistics'
+import type {
+  Statistics,
+  StatisticsQuery,
+  TimelinePoint
+} from '../types/statistics'
 import { AppError } from '../errors/app.error'
 import { CurrencyType } from '../types'
+import { PaginatedResult } from '../types/pagination'
 
 @Route('statistics')
 @Tags('Statistics')
@@ -46,8 +59,10 @@ export class StatisticsController {
       grossPL: 150
     }
   ])
-  public async getStats(): Promise<Statistics[]> {
-    return this.statisticsService.getPortfolioStats()
+  public async getStats(
+    @Queries() query: StatisticsQuery
+  ): Promise<PaginatedResult<Statistics>> {
+    return this.statisticsService.getPortfolioStats(query)
   }
 
   /**
