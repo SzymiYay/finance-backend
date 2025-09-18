@@ -116,6 +116,8 @@ const models: TsoaRoute.Models = {
             "order": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["ASC"]},{"dataType":"enum","enums":["DESC"]}]},
             "limit": {"dataType":"double"},
             "offset": {"dataType":"double"},
+            "symbol": {"dataType":"string"},
+            "getAll": {"dataType":"boolean"},
         },
         "additionalProperties": true,
     },

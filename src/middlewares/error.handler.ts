@@ -48,7 +48,14 @@ export const errorHandler = (
       message: error.message,
       errorCode: error.errorCode,
       statusCode: error.statusCode,
-      stack: error.stack
+      stack: error.stack,
+      cause: error.cause
+        ? {
+            message: error.cause.message,
+            name: error.cause.name,
+            stack: error.cause.stack
+          }
+        : null
     }
   })
 

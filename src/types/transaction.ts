@@ -36,6 +36,8 @@ export interface TransactionQuery {
   order?: 'ASC' | 'DESC'
   limit?: number
   offset?: number
+  symbol?: string
+  getAll?: boolean
 }
 
 export type TransactionSortableFields =

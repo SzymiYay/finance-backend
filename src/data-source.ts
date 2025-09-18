@@ -14,7 +14,7 @@ export const AppDataSource = new DataSource({
   url: process.env.SUPABASE_DB_URL,
   ssl: { rejectUnauthorized: false },
   synchronize: false,
-  logging: process.env.NODE_ENV === 'development',
+  logging: process.env.NODE_ENV === 'debug',
   entities: [Transaction],
   migrations: [__dirname + '/../migrations/*{.ts,.js}']
 })

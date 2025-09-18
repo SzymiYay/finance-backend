@@ -3,7 +3,7 @@ import { Statistics, StatisticsQuery, TimelinePoint } from '../types/statistics'
 import { roundCurrency, roundVolume } from '../utils/utils'
 import { TransactionService } from './transaction.service'
 import { PaginatedResult } from '../types/pagination'
-import { off } from 'process'
+import { Transaction } from '../models/transaction.entity'
 
 @injectable()
 export class StatisticsService {
@@ -21,43 +21,54 @@ export class StatisticsService {
       offset = 0
     } = query || {}
     const { data: transactions } =
+      await this.transactionService.getTransactions({
+        getAll: true,
+        sortBy: 'openTime',
+        order: 'ASC'
+      })
+
+    let stats = this.calculateStatistics(transactions)
+    stats = this.sortStatistics(stats, sortBy, order)
+
+    const paginated = this.paginate(stats, limit, offset)
+
+    return {
+      data: paginated,
+      total: stats.length,
+      limit,
+      offset
+    }
+  }
+
+  async getPortfolioTimeline(): Promise<TimelinePoint[]> {
+    const { data: transactions } =
       await this.transactionService.getTransactions()
+    return this.buildTimeline(transactions)
+  }
+
+  private calculateStatistics(transactions: Transaction[]): Statistics[] {
     const groupedBySymbol: Record<string, Statistics> = {}
 
-    for (const transaction of transactions) {
-      if (!groupedBySymbol[transaction.symbol]) {
-        groupedBySymbol[transaction.symbol] = {
-          currency: transaction.currency,
-          symbol: transaction.symbol,
-          totalVolume: 0,
-          totalCost: 0,
-          currentValue: 0,
-          avgPrice: 0,
-          grossPL: 0
-        }
-      }
+    for (const t of transactions) {
+      const g = (groupedBySymbol[t.symbol] ??= {
+        symbol: t.symbol,
+        currency: t.currency,
+        totalVolume: 0,
+        totalCost: 0,
+        currentValue: 0,
+        avgPrice: 0,
+        grossPL: 0
+      })
 
-      if (transaction.type === 'BUY') {
-        groupedBySymbol[transaction.symbol].totalVolume += Number(
-          transaction.volume
-        )
-        groupedBySymbol[transaction.symbol].totalCost +=
-          Number(transaction.volume) * Number(transaction.openPrice)
-      } else if (transaction.type === 'SELL') {
-        groupedBySymbol[transaction.symbol].totalVolume -= Number(
-          transaction.volume
-        )
-        groupedBySymbol[transaction.symbol].totalCost -=
-          Number(transaction.volume) * Number(transaction.openPrice)
-      }
+      const volumeDelta = t.type === 'BUY' ? +t.volume : -t.volume
+      const costDelta =
+        t.type === 'BUY' ? +t.volume * +t.openPrice : -t.volume * +t.openPrice
 
-      groupedBySymbol[transaction.symbol].currentValue +=
-        Number(transaction.volume) * Number(transaction.marketPrice)
-      groupedBySymbol[transaction.symbol].grossPL += Number(transaction.grossPL)
-    }
+      g.totalVolume += volumeDelta
+      g.totalCost += costDelta
+      g.currentValue += +t.volume * +t.marketPrice
+      g.grossPL += +(t.grossPL ?? 0)
 
-    for (const symbol in groupedBySymbol) {
-      const g = groupedBySymbol[symbol]
       g.avgPrice =
         g.totalVolume > 0 ? roundCurrency(g.totalCost / g.totalVolume) : 0
       g.totalVolume = roundVolume(g.totalVolume)
@@ -67,62 +78,42 @@ export class StatisticsService {
       g.grossPL = roundCurrency(g.grossPL)
     }
 
-    const stats = Object.values(groupedBySymbol)
-
-    stats.sort((a, b) => {
-      const valA = a[sortBy]
-      const valB = b[sortBy]
-
-      if (typeof valA === 'number' && typeof valB === 'number') {
-        return order === 'ASC' ? valA - valB : valB - valA
-      }
-
-      if (typeof valA === 'string' && typeof valB === 'string') {
-        return order === 'ASC'
-          ? valA.localeCompare(valB)
-          : valB.localeCompare(valA)
-      }
-
-      return 0
-    })
-
-    const total = stats.length
-    const paginated = stats.slice(offset, offset + limit)
-
-    return {
-      data: paginated,
-      total,
-      limit,
-      offset
-    }
+    return Object.values(groupedBySymbol)
   }
 
-  async getPortfolioTimeline(): Promise<TimelinePoint[]> {
-    const { data: transactions } =
-      await this.transactionService.getTransactions()
-    const transactionsSortedByDate = [...transactions].sort(
-      (a, b) => new Date(a.openTime).getTime() - new Date(b.openTime).getTime()
+  private sortStatistics(
+    data: Statistics[],
+    sortBy: keyof Statistics,
+    order: 'ASC' | 'DESC'
+  ): Statistics[] {
+    return data.sort((a, b) => {
+      const valueA = a[sortBy]
+      const valueB = b[sortBy]
+      if (typeof valueA === 'number' && typeof valueB === 'number')
+        return order === 'ASC' ? valueA - valueB : valueB - valueA
+      if (typeof valueA === 'string' && typeof valueB === 'string')
+        return order === 'ASC'
+          ? valueA.localeCompare(valueB)
+          : valueB.localeCompare(valueA)
+      return 0
+    })
+  }
+
+  private paginate<T>(items: T[], limit: number, offset: number): T[] {
+    return items.slice(offset, offset + limit)
+  }
+
+  private buildTimeline(transactions: Transaction[]): TimelinePoint[] {
+    const sortedTransactions = [...transactions].sort(
+      (a, b) => +new Date(a.openTime) - +new Date(b.openTime)
     )
-    const timeline: TimelinePoint[] = []
     let cumulativeValue = 0
-
-    for (const transaction of transactionsSortedByDate) {
-      const date = new Date(transaction.openTime).toISOString().split('T')[0]
-
-      if (transaction.type === 'BUY') {
-        cumulativeValue +=
-          Number(transaction.volume) * Number(transaction.openPrice)
-      } else if (transaction.type === 'SELL') {
-        cumulativeValue -=
-          Number(transaction.volume) * Number(transaction.openPrice)
-      }
-
-      timeline.push({
-        date,
+    return sortedTransactions.map((t) => {
+      cumulativeValue += (t.type === 'BUY' ? 1 : -1) * +t.volume * +t.openPrice
+      return {
+        date: new Date(t.openTime).toISOString().split('T')[0],
         value: roundCurrency(cumulativeValue)
-      })
-    }
-
-    return timeline
+      }
+    })
   }
 }

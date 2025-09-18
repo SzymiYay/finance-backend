@@ -34,10 +34,20 @@ export class TransactionRepository implements ITransactionRepository {
       sortBy = 'openTime',
       order = 'DESC',
       limit = 10,
-      offset = 0
+      offset = 0,
+      getAll = false
     } = query || {}
 
+    if (getAll) {
+      const [transactions, total] = await this.repo.findAndCount({
+        order: { [sortBy]: order }
+      })
+
+      return { data: transactions, total, limit: total, offset: 0 }
+    }
+
     const [transactions, total] = await this.repo.findAndCount({
+      where: symbol ? { symbol } : {},
       order: { [sortBy]: order },
       take: limit,
       skip: offset

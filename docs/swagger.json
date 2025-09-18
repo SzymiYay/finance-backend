@@ -315,6 +315,12 @@
           "offset": {
             "type": "number",
             "format": "double"
+          },
+          "symbol": {
+            "type": "string"
+          },
+          "getAll": {
+            "type": "boolean"
           }
         },
         "type": "object"
@@ -677,6 +683,22 @@
             "schema": {
               "format": "double",
               "type": "number"
+            }
+          },
+          {
+            "in": "query",
+            "name": "symbol",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "getAll",
+            "required": false,
+            "schema": {
+              "type": "boolean"
             }
           }
         ]
