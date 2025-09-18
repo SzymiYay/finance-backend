@@ -119,6 +119,7 @@ describe('TransactionRepository', () => {
       const result = await transactionRepository.findAll({})
 
       expect(mockRepository.findAndCount).toHaveBeenCalledWith({
+        where: {},
         order: { openTime: 'DESC' },
         take: 10,
         skip: 0
@@ -133,6 +134,7 @@ describe('TransactionRepository', () => {
       const result = await transactionRepository.findAll({})
 
       expect(mockRepository.findAndCount).toHaveBeenCalledWith({
+        where: {},
         order: { openTime: 'DESC' },
         take: 10,
         skip: 0
@@ -157,6 +159,7 @@ describe('TransactionRepository', () => {
       const result = await transactionRepository.findAll(query)
 
       expect(mockRepository.findAndCount).toHaveBeenCalledWith({
+        where: {},
         order: { symbol: 'ASC' },
         take: 5,
         skip: 10

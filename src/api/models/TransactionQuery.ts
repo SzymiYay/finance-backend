@@ -8,6 +8,8 @@ export type TransactionQuery = {
     order?: TransactionQuery.order;
     limit?: number;
     offset?: number;
+    symbol?: string;
+    getAll?: boolean;
 };
 export namespace TransactionQuery {
     export enum order {

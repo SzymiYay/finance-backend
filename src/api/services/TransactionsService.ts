@@ -37,6 +37,8 @@ export class TransactionsService {
      * @param order
      * @param limit
      * @param offset
+     * @param symbol
+     * @param getAll
      * @returns PaginatedResult_Transaction_ Tablica transakcji
      * @throws ApiError
      */
@@ -45,6 +47,8 @@ export class TransactionsService {
         order?: 'ASC' | 'DESC',
         limit?: number,
         offset?: number,
+        symbol?: string,
+        getAll?: boolean,
     ): CancelablePromise<PaginatedResult_Transaction_> {
         return __request(OpenAPI, {
             method: 'GET',
@@ -54,6 +58,8 @@ export class TransactionsService {
                 'order': order,
                 'limit': limit,
                 'offset': offset,
+                'symbol': symbol,
+                'getAll': getAll,
             },
             errors: {
                 500: `Internal server error`,
