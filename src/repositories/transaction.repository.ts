@@ -47,7 +47,6 @@ export class TransactionRepository implements ITransactionRepository {
     }
 
     const [transactions, total] = await this.repo.findAndCount({
-      where: symbol ? { symbol } : {},
       order: { [sortBy]: order },
       take: limit,
       skip: offset
